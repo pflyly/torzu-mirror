@@ -170,81 +170,6 @@ add_library(video_core STATIC
     renderer_opengl/renderer_opengl.h
     renderer_opengl/util_shaders.cpp
     renderer_opengl/util_shaders.h
-    renderer_vulkan/present/anti_alias_pass.h
-    renderer_vulkan/present/filters.cpp
-    renderer_vulkan/present/filters.h
-    renderer_vulkan/present/fsr.cpp
-    renderer_vulkan/present/fsr.h
-    renderer_vulkan/present/fxaa.cpp
-    renderer_vulkan/present/fxaa.h
-    renderer_vulkan/present/layer.cpp
-    renderer_vulkan/present/layer.h
-    renderer_vulkan/present/present_push_constants.h
-    renderer_vulkan/present/smaa.cpp
-    renderer_vulkan/present/smaa.h
-    renderer_vulkan/present/util.cpp
-    renderer_vulkan/present/util.h
-    renderer_vulkan/present/window_adapt_pass.cpp
-    renderer_vulkan/present/window_adapt_pass.h
-    renderer_vulkan/blit_image.cpp
-    renderer_vulkan/blit_image.h
-    renderer_vulkan/fixed_pipeline_state.cpp
-    renderer_vulkan/fixed_pipeline_state.h
-    renderer_vulkan/maxwell_to_vk.cpp
-    renderer_vulkan/maxwell_to_vk.h
-    renderer_vulkan/pipeline_helper.h
-    renderer_vulkan/pipeline_statistics.cpp
-    renderer_vulkan/pipeline_statistics.h
-    renderer_vulkan/renderer_vulkan.h
-    renderer_vulkan/renderer_vulkan.cpp
-    renderer_vulkan/vk_blit_screen.cpp
-    renderer_vulkan/vk_blit_screen.h
-    renderer_vulkan/vk_buffer_cache_base.cpp
-    renderer_vulkan/vk_buffer_cache.cpp
-    renderer_vulkan/vk_buffer_cache.h
-    renderer_vulkan/vk_command_pool.cpp
-    renderer_vulkan/vk_command_pool.h
-    renderer_vulkan/vk_compute_pass.cpp
-    renderer_vulkan/vk_compute_pass.h
-    renderer_vulkan/vk_compute_pipeline.cpp
-    renderer_vulkan/vk_compute_pipeline.h
-    renderer_vulkan/vk_descriptor_pool.cpp
-    renderer_vulkan/vk_descriptor_pool.h
-    renderer_vulkan/vk_fence_manager.cpp
-    renderer_vulkan/vk_fence_manager.h
-    renderer_vulkan/vk_graphics_pipeline.cpp
-    renderer_vulkan/vk_graphics_pipeline.h
-    renderer_vulkan/vk_master_semaphore.cpp
-    renderer_vulkan/vk_master_semaphore.h
-    renderer_vulkan/vk_pipeline_cache.cpp
-    renderer_vulkan/vk_pipeline_cache.h
-    renderer_vulkan/vk_present_manager.cpp
-    renderer_vulkan/vk_present_manager.h
-    renderer_vulkan/vk_query_cache.cpp
-    renderer_vulkan/vk_query_cache.h
-    renderer_vulkan/vk_rasterizer.cpp
-    renderer_vulkan/vk_rasterizer.h
-    renderer_vulkan/vk_render_pass_cache.cpp
-    renderer_vulkan/vk_render_pass_cache.h
-    renderer_vulkan/vk_resource_pool.cpp
-    renderer_vulkan/vk_resource_pool.h
-    renderer_vulkan/vk_scheduler.cpp
-    renderer_vulkan/vk_scheduler.h
-    renderer_vulkan/vk_shader_util.cpp
-    renderer_vulkan/vk_shader_util.h
-    renderer_vulkan/vk_staging_buffer_pool.cpp
-    renderer_vulkan/vk_staging_buffer_pool.h
-    renderer_vulkan/vk_state_tracker.cpp
-    renderer_vulkan/vk_state_tracker.h
-    renderer_vulkan/vk_swapchain.cpp
-    renderer_vulkan/vk_swapchain.h
-    renderer_vulkan/vk_texture_cache.cpp
-    renderer_vulkan/vk_texture_cache.h
-    renderer_vulkan/vk_texture_cache_base.cpp
-    renderer_vulkan/vk_turbo_mode.cpp
-    renderer_vulkan/vk_turbo_mode.h
-    renderer_vulkan/vk_update_descriptor.cpp
-    renderer_vulkan/vk_update_descriptor.h
     shader_cache.cpp
     shader_cache.h
     shader_environment.cpp
@@ -294,25 +219,6 @@ add_library(video_core STATIC
     transform_feedback.h
     video_core.cpp
     video_core.h
-    vulkan_common/vulkan_debug_callback.cpp
-    vulkan_common/vulkan_debug_callback.h
-    vulkan_common/vulkan_device.cpp
-    vulkan_common/vulkan_device.h
-    vulkan_common/vulkan_instance.cpp
-    vulkan_common/vulkan_instance.h
-    vulkan_common/vulkan_library.cpp
-    vulkan_common/vulkan_library.h
-    vulkan_common/vulkan_memory_allocator.cpp
-    vulkan_common/vulkan_memory_allocator.h
-    vulkan_common/vulkan_surface.cpp
-    vulkan_common/vulkan_surface.h
-    vulkan_common/vulkan_wrapper.cpp
-    vulkan_common/vulkan_wrapper.h
-    vulkan_common/nsight_aftermath_tracker.cpp
-    vulkan_common/nsight_aftermath_tracker.h
-    vulkan_common/vma.cpp
-    vulkan_common/vma.h
-    vulkan_common/vulkan.h
 )
 
 target_link_libraries(video_core PUBLIC common core)
@@ -328,7 +234,7 @@ target_link_options(video_core PRIVATE ${FFmpeg_LDFLAGS})
 
 add_dependencies(video_core host_shaders)
 target_include_directories(video_core PRIVATE ${HOST_SHADERS_INCLUDE})
-target_link_libraries(video_core PRIVATE sirit Vulkan::Headers Vulkan::UtilityHeaders GPUOpen::VulkanMemoryAllocator)
+target_link_libraries(video_core PRIVATE sirit)
 
 if (ENABLE_NSIGHT_AFTERMATH)
     if (NOT DEFINED ENV{NSIGHT_AFTERMATH_SDK})
@@ -361,9 +267,6 @@ else()
 
     # xbyak
     set_source_files_properties(macro/macro_jit_x64.cpp PROPERTIES COMPILE_OPTIONS "-Wno-conversion;-Wno-shadow")
-
-    # VMA
-    set_source_files_properties(vulkan_common/vma.cpp PROPERTIES COMPILE_OPTIONS "-Wno-conversion;-Wno-unused-variable;-Wno-unused-parameter;-Wno-missing-field-initializers")
 endif()
 
 if (ARCHITECTURE_x86_64)

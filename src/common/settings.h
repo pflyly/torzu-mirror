@@ -266,7 +266,7 @@ struct Values {
 
     // Renderer
     SwitchableSetting<RendererBackend, true> renderer_backend{
-        linkage,   RendererBackend::Vulkan, RendererBackend::OpenGL, RendererBackend::Null,
+        linkage,   RendererBackend::OpenGL, RendererBackend::OpenGL, RendererBackend::Null,
         "backend", Category::Renderer};
     SwitchableSetting<ShaderBackend, true> shader_backend{
         linkage,          ShaderBackend::Glsl, ShaderBackend::Glsl,        ShaderBackend::SpirV,

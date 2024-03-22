@@ -52,22 +52,6 @@ set(SHADER_FILES
     smaa_blending_weight_calculation.frag
     smaa_neighborhood_blending.vert
     smaa_neighborhood_blending.frag
-    vulkan_blit_depth_stencil.frag
-    vulkan_color_clear.frag
-    vulkan_color_clear.vert
-    vulkan_depthstencil_clear.frag
-    vulkan_fidelityfx_fsr.vert
-    vulkan_fidelityfx_fsr_easu_fp16.frag
-    vulkan_fidelityfx_fsr_easu_fp32.frag
-    vulkan_fidelityfx_fsr_rcas_fp16.frag
-    vulkan_fidelityfx_fsr_rcas_fp32.frag
-    vulkan_present.frag
-    vulkan_present.vert
-    vulkan_present_scaleforce_fp16.frag
-    vulkan_present_scaleforce_fp32.frag
-    vulkan_quad_indexed.comp
-    vulkan_turbo_mode.comp
-    vulkan_uint8.comp
 )
 
 find_program(GLSLANGVALIDATOR "glslangValidator")
