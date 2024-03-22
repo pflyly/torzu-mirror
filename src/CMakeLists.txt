@@ -205,10 +205,6 @@ if (ENABLE_SDL2)
     add_subdirectory(yuzu_cmd)
 endif()
 
-if (ENABLE_QT)
-    add_subdirectory(yuzu)
-endif()
-
 if (ENABLE_WEB_SERVICE)
     add_subdirectory(web_service)
 endif()
