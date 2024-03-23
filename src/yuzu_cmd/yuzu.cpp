@@ -36,7 +36,6 @@
 #include "yuzu_cmd/emu_window/emu_window_sdl2.h"
 #include "yuzu_cmd/emu_window/emu_window_sdl2_gl.h"
 #include "yuzu_cmd/emu_window/emu_window_sdl2_null.h"
-#include "yuzu_cmd/emu_window/emu_window_sdl2_vk.h"
 
 #ifdef _WIN32
 // windows.h needs to be included before shellapi.h
