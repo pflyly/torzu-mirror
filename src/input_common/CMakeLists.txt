@@ -77,15 +77,6 @@ if (ENABLE_SDL2)
     target_compile_definitions(input_common PRIVATE HAVE_SDL2)
 endif()
 
-if (ENABLE_LIBUSB)
-    target_sources(input_common PRIVATE
-        drivers/gc_adapter.cpp
-        drivers/gc_adapter.h
-    )
-    target_link_libraries(input_common PRIVATE libusb::usb)
-    target_compile_definitions(input_common PRIVATE HAVE_LIBUSB)
-endif()
-
 create_target_directory_groups(input_common)
 target_link_libraries(input_common PUBLIC hid_core PRIVATE common Boost::headers)
 

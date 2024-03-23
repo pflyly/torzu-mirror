@@ -11,8 +11,8 @@
 #include "shader_recompiler/frontend/ir/type.h"
 #include "shader_recompiler/varying_state.h"
 
-#include <boost/container/small_vector.hpp>
-#include <boost/container/static_vector.hpp>
+#include <vector>
+#include <etl/vector.h>>
 
 namespace Shader {
 
@@ -186,7 +186,7 @@ struct TextureBufferDescriptor {
 
     auto operator<=>(const TextureBufferDescriptor&) const = default;
 };
-using TextureBufferDescriptors = boost::container::small_vector<TextureBufferDescriptor, 6>;
+using TextureBufferDescriptors = std::vector<TextureBufferDescriptor>;
 
 struct ImageBufferDescriptor {
     ImageFormat format;
@@ -200,7 +200,7 @@ struct ImageBufferDescriptor {
 
     auto operator<=>(const ImageBufferDescriptor&) const = default;
 };
-using ImageBufferDescriptors = boost::container::small_vector<ImageBufferDescriptor, 2>;
+using ImageBufferDescriptors = std::vector<ImageBufferDescriptor>;
 
 struct TextureDescriptor {
     TextureType type;
@@ -218,7 +218,7 @@ struct TextureDescriptor {
 
     auto operator<=>(const TextureDescriptor&) const = default;
 };
-using TextureDescriptors = boost::container::small_vector<TextureDescriptor, 12>;
+using TextureDescriptors = std::vector<TextureDescriptor>;
 
 struct ImageDescriptor {
     TextureType type;
@@ -233,7 +233,7 @@ struct ImageDescriptor {
 
     auto operator<=>(const ImageDescriptor&) const = default;
 };
-using ImageDescriptors = boost::container::small_vector<ImageDescriptor, 4>;
+using ImageDescriptors = std::vector<ImageDescriptor>;
 
 struct Info {
     static constexpr size_t MAX_INDIRECT_CBUFS{14};
@@ -326,9 +326,9 @@ struct Info {
 
     u32 used_clip_distances{};
 
-    boost::container::static_vector<ConstantBufferDescriptor, MAX_CBUFS>
+    etl::vector<ConstantBufferDescriptor, MAX_CBUFS>
         constant_buffer_descriptors;
-    boost::container::static_vector<StorageBufferDescriptor, MAX_SSBOS> storage_buffers_descriptors;
+    etl::vector<StorageBufferDescriptor, MAX_SSBOS> storage_buffers_descriptors;
     TextureBufferDescriptors texture_buffer_descriptors;
     ImageBufferDescriptors image_buffer_descriptors;
     TextureDescriptors texture_descriptors;

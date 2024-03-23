@@ -188,14 +188,9 @@ add_subdirectory(core)
 add_subdirectory(audio_core)
 add_subdirectory(video_core)
 add_subdirectory(hid_core)
-add_subdirectory(network)
 add_subdirectory(input_common)
 add_subdirectory(frontend_common)
 add_subdirectory(shader_recompiler)
-
-if (YUZU_ROOM)
-     add_subdirectory(dedicated_room)
-endif()
 
 if (YUZU_TESTS)
     add_subdirectory(tests)
@@ -203,10 +198,6 @@ endif()
 
 if (ENABLE_SDL2)
     add_subdirectory(yuzu_cmd)
-endif()
-
-if (ENABLE_WEB_SERVICE)
-    add_subdirectory(web_service)
 endif()
 
 if (ANDROID)

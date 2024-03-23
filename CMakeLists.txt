@@ -15,16 +15,9 @@ include(CTest)
 # Set bundled sdl2/qt as dependent options.
 # OFF by default, but if ENABLE_SDL2 and MSVC are true then ON
 option(ENABLE_SDL2 "Enable the SDL2 frontend" ON)
-CMAKE_DEPENDENT_OPTION(YUZU_USE_BUNDLED_SDL2 "Download bundled SDL2 binaries" ON "ENABLE_SDL2;MSVC" OFF)
-# On Linux system SDL2 is likely to be lacking HIDAPI support which have drawbacks but is needed for SDL motion
-CMAKE_DEPENDENT_OPTION(YUZU_USE_EXTERNAL_SDL2 "Compile external SDL2" ON "ENABLE_SDL2;NOT MSVC" OFF)
-
-cmake_dependent_option(ENABLE_LIBUSB "Enable the use of LibUSB" ON "NOT ANDROID" OFF)
 
 option(ENABLE_OPENGL "Enable OpenGL" ON)
 mark_as_advanced(FORCE ENABLE_OPENGL)
-
-option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" ON)
 
 option(YUZU_USE_BUNDLED_FFMPEG "Download/Build bundled FFmpeg" "${WIN32}")
 
@@ -45,8 +38,6 @@ option(YUZU_TESTS "Compile tests" "${BUILD_TESTING}")
 option(YUZU_USE_PRECOMPILED_HEADERS "Use precompiled headers" ON)
 
 option(YUZU_DOWNLOAD_ANDROID_VVL "Download validation layer binary for android" ON)
-
-CMAKE_DEPENDENT_OPTION(YUZU_ROOM "Compile LDN room server" ON "NOT ANDROID" OFF)
 
 CMAKE_DEPENDENT_OPTION(YUZU_CRASH_DUMPS "Compile crash dump (Minidump) support" OFF "WIN32 OR LINUX" OFF)
 
@@ -135,9 +126,6 @@ if (YUZU_USE_BUNDLED_VCPKG)
     if (YUZU_TESTS)
         list(APPEND VCPKG_MANIFEST_FEATURES "yuzu-tests")
     endif()
-    if (ENABLE_WEB_SERVICE)
-        list(APPEND VCPKG_MANIFEST_FEATURES "web-service")
-    endif()
     if (ANDROID)
         list(APPEND VCPKG_MANIFEST_FEATURES "android")
     endif()
@@ -154,7 +142,6 @@ if (YUZU_USE_PRECOMPILED_HEADERS)
         # buildcache does not properly cache PCH files, leading to compilation errors.
         # See https://github.com/mbitsnbites/buildcache/discussions/230
         message(WARNING "buildcache does not properly support Precompiled Headers. Disabling PCH")
-        set(DYNARMIC_USE_PRECOMPILED_HEADERS OFF CACHE BOOL "" FORCE)
         set(YUZU_USE_PRECOMPILED_HEADERS OFF CACHE BOOL "" FORCE)
     endif()
 endif()
@@ -277,7 +264,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # =======================================================================
 
 # Enforce the search mode of non-required packages for better and shorter failure messages
-find_package(enet 1.3 MODULE)
 find_package(fmt 9 REQUIRED)
 find_package(LLVM 17.0.2 MODULE COMPONENTS Demangle)
 find_package(lz4 REQUIRED)
@@ -298,10 +284,6 @@ if (NOT YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
     find_package(VulkanUtilityLibraries REQUIRED)
 endif()
 
-if (ENABLE_LIBUSB)
-    find_package(libusb 1.0.24 MODULE)
-endif()
-
 if (ARCHITECTURE_x86 OR ARCHITECTURE_x86_64)
     find_package(xbyak 7 CONFIG)
 endif()
@@ -310,21 +292,12 @@ if (ARCHITECTURE_arm64)
     find_package(oaknut 2.0.1 CONFIG)
 endif()
 
-if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
-    find_package(dynarmic 6.4.0 CONFIG)
-endif()
-
 if (ENABLE_CUBEB)
     find_package(cubeb CONFIG)
 endif()
 
 if (USE_DISCORD_PRESENCE)
     find_package(DiscordRPC MODULE)
-endif()
-
-if (ENABLE_WEB_SERVICE)
-    find_package(cpp-jwt 1.4 CONFIG)
-    find_package(httplib 0.12 MODULE COMPONENTS OpenSSL)
 endif()
 
 if (YUZU_TESTS)
@@ -359,31 +332,7 @@ endfunction(set_yuzu_qt_components)
 
 # find SDL2 exports a bunch of variables that are needed, so its easier to do this outside of the yuzu_find_package
 if (ENABLE_SDL2)
-    if (YUZU_USE_BUNDLED_SDL2)
-        # Detect toolchain and platform
-        if ((MSVC_VERSION GREATER_EQUAL 1920 AND MSVC_VERSION LESS 1940) AND ARCHITECTURE_x86_64)
-            set(SDL2_VER "SDL2-2.28.2")
-        else()
-            message(FATAL_ERROR "No bundled SDL2 binaries for your toolchain. Disable YUZU_USE_BUNDLED_SDL2 and provide your own.")
-        endif()
-
-        if (DEFINED SDL2_VER)
-            download_bundled_external("sdl2/" ${SDL2_VER} SDL2_PREFIX)
-        endif()
-
-        set(SDL2_FOUND YES)
-        set(SDL2_INCLUDE_DIR "${SDL2_PREFIX}/include" CACHE PATH "Path to SDL2 headers")
-        set(SDL2_LIBRARY "${SDL2_PREFIX}/lib/x64/SDL2.lib" CACHE PATH "Path to SDL2 library")
-        set(SDL2_DLL_DIR "${SDL2_PREFIX}/lib/x64/" CACHE PATH "Path to SDL2.dll")
-
-        add_library(SDL2::SDL2 INTERFACE IMPORTED)
-        target_link_libraries(SDL2::SDL2 INTERFACE "${SDL2_LIBRARY}")
-        target_include_directories(SDL2::SDL2 INTERFACE "${SDL2_INCLUDE_DIR}")
-    elseif (YUZU_USE_EXTERNAL_SDL2)
-        message(STATUS "Using SDL2 from externals.")
-    else()
-        find_package(SDL2 2.26.4 REQUIRED)
-    endif()
+    find_package(SDL2 2.26.4 REQUIRED)
 endif()
 
 # List of all FFmpeg components required

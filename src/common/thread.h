@@ -102,8 +102,4 @@ enum class ThreadPriority : u32 {
     Critical = 4,
 };
 
-void SetCurrentThreadPriority(ThreadPriority new_priority);
-
-void SetCurrentThreadName(const char* name);
-
 } // namespace Common

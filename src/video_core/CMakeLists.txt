@@ -281,10 +281,6 @@ if (ARCHITECTURE_x86_64)
     endif()
 endif()
 
-if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
-    target_link_libraries(video_core PRIVATE dynarmic::dynarmic)
-endif()
-
 if (YUZU_USE_PRECOMPILED_HEADERS)
     target_precompile_headers(video_core PRIVATE precompiled_headers.h)
 endif()

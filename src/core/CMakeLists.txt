@@ -1167,11 +1167,6 @@ if (MINGW)
     target_link_libraries(core PRIVATE ${MSWSOCK_LIBRARY})
 endif()
 
-if (ENABLE_WEB_SERVICE)
-    target_compile_definitions(core PRIVATE -DENABLE_WEB_SERVICE)
-    target_link_libraries(core PRIVATE web_service)
-endif()
-
 if (HAS_NCE)
     enable_language(C ASM)
     set(CMAKE_ASM_FLAGS "${CFLAGS} -x assembler-with-cpp")
@@ -1190,28 +1185,6 @@ if (HAS_NCE)
         arm/nce/visitor_base.h
     )
     target_link_libraries(core PRIVATE merry::mcl merry::oaknut)
-endif()
-
-if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
-    target_sources(core PRIVATE
-        arm/dynarmic/arm_dynarmic.cpp
-        arm/dynarmic/arm_dynarmic.h
-        arm/dynarmic/arm_dynarmic_64.cpp
-        arm/dynarmic/arm_dynarmic_64.h
-        arm/dynarmic/arm_dynarmic_32.cpp
-        arm/dynarmic/arm_dynarmic_32.h
-        arm/dynarmic/dynarmic_cp15.cpp
-        arm/dynarmic/dynarmic_cp15.h
-        arm/dynarmic/dynarmic_exclusive_monitor.cpp
-        arm/dynarmic/dynarmic_exclusive_monitor.h
-        hle/service/jit/jit_code_memory.cpp
-        hle/service/jit/jit_code_memory.h
-        hle/service/jit/jit_context.cpp
-        hle/service/jit/jit_context.h
-        hle/service/jit/jit.cpp
-        hle/service/jit/jit.h
-    )
-    target_link_libraries(core PRIVATE dynarmic::dynarmic)
 endif()
 
 if(ENABLE_OPENSSL)

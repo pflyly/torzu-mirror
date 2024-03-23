@@ -1,10 +1,6 @@
 # SPDX-FileCopyrightText: 2016 Citra Emulator Project
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-# Dynarmic has cmake_minimum_required(3.12) and we may want to override
-# some of its variables, which is only possible in 3.13+
-set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
-
 # Disable tests in all externals supporting the standard option name
 set(BUILD_TESTING OFF)
 
@@ -24,28 +20,12 @@ if (ARCHITECTURE_arm64 AND NOT TARGET merry::oaknut)
     add_subdirectory(oaknut)
 endif()
 
-# Dynarmic
-if ((ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64) AND NOT TARGET dynarmic::dynarmic)
-    set(DYNARMIC_IGNORE_ASSERTS ON)
-    add_subdirectory(dynarmic)
-    add_library(dynarmic::dynarmic ALIAS dynarmic)
-endif()
+# Boost headers
+add_subdirectory(boost-headers)
 
 # getopt
 if (MSVC)
     add_subdirectory(getopt)
-endif()
-
-# Glad
-add_subdirectory(glad)
-
-# mbedtls
-add_subdirectory(mbedtls)
-target_include_directories(mbedtls PUBLIC ./mbedtls/include)
-if (NOT MSVC)
-    target_compile_options(mbedcrypto PRIVATE
-        -Wno-unused-but-set-variable
-        -Wno-string-concatenation)
 endif()
 
 # MicroProfile
@@ -55,35 +35,6 @@ target_include_directories(microprofile INTERFACE ./microprofile)
 # GCC bugs
 if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND MINGW)
     target_compile_options(microprofile INTERFACE "-Wno-array-bounds")
-endif()
-
-# libusb
-if (ENABLE_LIBUSB AND NOT TARGET libusb::usb)
-    add_subdirectory(libusb)
-endif()
-
-# SDL2
-if (YUZU_USE_EXTERNAL_SDL2)
-    if (NOT WIN32)
-        # Yuzu itself needs: Atomic Audio Events Joystick Haptic Sensor Threads Timers
-        # Since 2.0.18 Atomic+Threads required for HIDAPI/libusb (see https://github.com/libsdl-org/SDL/issues/5095)
-        # Yuzu-cmd also needs: Video (depends on Loadso/Dlopen)
-        # CPUinfo also required for SDL Audio, at least until 2.28.0 (see https://github.com/libsdl-org/SDL/issues/7809)
-        set(SDL_UNUSED_SUBSYSTEMS
-            File Filesystem
-            Locale Power Render)
-        foreach(_SUB ${SDL_UNUSED_SUBSYSTEMS})
-          string(TOUPPER ${_SUB} _OPT)
-          set(SDL_${_OPT} OFF)
-        endforeach()
-
-        set(HIDAPI ON)
-    endif()
-    if (APPLE)
-        set(SDL_FILE ON)
-    endif()
-
-    add_subdirectory(SDL)
 endif()
 
 # ENet
@@ -118,20 +69,6 @@ endif()
 # Sirit
 add_subdirectory(sirit)
 
-# httplib
-if (ENABLE_WEB_SERVICE AND NOT TARGET httplib::httplib)
-    set(HTTPLIB_REQUIRE_OPENSSL ON)
-    add_subdirectory(cpp-httplib)
-endif()
-
-# cpp-jwt
-if (ENABLE_WEB_SERVICE AND NOT TARGET cpp-jwt::cpp-jwt)
-    set(CPP_JWT_BUILD_EXAMPLES OFF)
-    set(CPP_JWT_BUILD_TESTS OFF)
-    set(CPP_JWT_USE_VENDORED_NLOHMANN_JSON OFF)
-    add_subdirectory(cpp-jwt)
-endif()
-
 # Opus
 if (NOT TARGET Opus::opus)
     set(OPUS_BUILD_TESTING OFF)
@@ -150,8 +87,8 @@ if (YUZU_USE_BUNDLED_FFMPEG)
     set(FFmpeg_INCLUDE_DIR "${FFmpeg_INCLUDE_DIR}" PARENT_SCOPE)
 endif()
 
-# Boost headers
-add_subdirectory(boost-headers)
+# Embedded template library
+add_subdirectory(etl)
 
 # TZDB (Time Zone Database)
 add_subdirectory(nx_tzdb)

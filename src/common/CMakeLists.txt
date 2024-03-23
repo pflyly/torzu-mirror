@@ -43,8 +43,6 @@ add_library(common STATIC
     detached_tasks.cpp
     detached_tasks.h
     div_ceil.h
-    dynamic_library.cpp
-    dynamic_library.h
     elf.h
     error.cpp
     error.h
@@ -253,7 +251,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 target_link_libraries(common PUBLIC Boost::headers fmt::fmt microprofile stb::headers Threads::Threads)
-target_link_libraries(common PRIVATE lz4::lz4 zstd::zstd LLVM::Demangle)
+target_link_libraries(common PRIVATE lz4::lz4 zstd LLVM::Demangle)
 
 if (ANDROID)
     # For ASharedMemory_create

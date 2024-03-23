@@ -243,7 +243,6 @@ private:
 
     void StartBackendThread() {
         backend_thread = std::jthread([this](std::stop_token stop_token) {
-            Common::SetCurrentThreadName("Logger");
             Entry entry;
             const auto write_logs = [this, &entry]() {
                 ForEachBackend([&entry](Backend& backend) { backend.Write(entry); });

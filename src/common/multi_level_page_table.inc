@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <sys/mman.h>
+#include <cstdlib>
 #endif
 
 #include "common/assert.h"
@@ -29,14 +29,13 @@ MultiLevelPageTable<BaseAddr>::MultiLevelPageTable(std::size_t address_space_bit
 #ifdef _WIN32
     void* base{VirtualAlloc(nullptr, alloc_size, MEM_RESERVE, PAGE_READWRITE)};
 #else
-    void* base{mmap(nullptr, alloc_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)};
+    void *base{malloc(alloc_size)};
 
-    if (base == MAP_FAILED) {
+    if (base == nullptr) {
         base = nullptr;
     }
 #endif
 
-    ASSERT(base);
     base_ptr = reinterpret_cast<BaseAddr*>(base);
 }
 
@@ -48,7 +47,7 @@ MultiLevelPageTable<BaseAddr>::~MultiLevelPageTable() noexcept {
 #ifdef _WIN32
     ASSERT(VirtualFree(base_ptr, 0, MEM_RELEASE));
 #else
-    ASSERT(munmap(base_ptr, alloc_size) == 0);
+    free(base_ptr);
 #endif
 }
 
@@ -69,14 +68,12 @@ void MultiLevelPageTable<BaseAddr>::AllocateLevel(u64 level) {
 #ifdef _WIN32
     void* base{VirtualAlloc(ptr, first_level_chunk_size, MEM_COMMIT, PAGE_READWRITE)};
 #else
-    void* base{mmap(ptr, first_level_chunk_size, PROT_READ | PROT_WRITE,
-                    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0)};
+    void* base{realloc(ptr, first_level_chunk_size)};
 
-    if (base == MAP_FAILED) {
+    if (base == nullptr) {
         base = nullptr;
     }
 #endif
-    ASSERT(base);
 
     first_level_map[level] = base;
 }

@@ -7,8 +7,7 @@
 #include <map>
 #include <span>
 #include <vector>
-
-#include <boost/intrusive/list.hpp>
+#include <list>
 
 #include "common/bit_cast.h"
 #include "common/common_types.h"
@@ -20,7 +19,7 @@ namespace Shader::IR {
 
 class Block {
 public:
-    using InstructionList = boost::intrusive::list<Inst>;
+    using InstructionList = std::list<Inst>;
     using size_type = InstructionList::size_type;
     using iterator = InstructionList::iterator;
     using const_iterator = InstructionList::const_iterator;

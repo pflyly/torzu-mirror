@@ -10,9 +10,6 @@
 #include <utility>
 #include <vector>
 
-#include <boost/container/small_vector.hpp>
-#include <boost/intrusive/list.hpp>
-
 #include "common/assert.h"
 #include "common/bit_cast.h"
 #include "common/common_types.h"
@@ -110,7 +107,7 @@ public:
     explicit TypedValue(IR::Inst* inst_) : TypedValue(Value(inst_)) {}
 };
 
-class Inst : public boost::intrusive::list_base_hook<> {
+class Inst {
 public:
     explicit Inst(IR::Opcode op_, u32 flags_) noexcept;
     explicit Inst(const Inst& base);
@@ -241,7 +238,7 @@ private:
     u32 definition{};
     union {
         NonTriviallyDummy dummy{};
-        boost::container::small_vector<std::pair<Block*, Value>, 2> phi_args;
+        std::vector<std::pair<Block*, Value>> phi_args;
         std::array<Value, 5> args;
     };
     std::unique_ptr<AssociatedInsts> associated_insts;

@@ -227,9 +227,6 @@ else()
 endif()
 
 target_link_libraries(audio_core PUBLIC common core Opus::opus)
-if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
-    target_link_libraries(audio_core PRIVATE dynarmic::dynarmic)
-endif()
 
 if (ENABLE_CUBEB)
     target_sources(audio_core PRIVATE
