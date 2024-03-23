@@ -150,6 +150,9 @@ if (YUZU_USE_BUNDLED_FFMPEG)
     set(FFmpeg_INCLUDE_DIR "${FFmpeg_INCLUDE_DIR}" PARENT_SCOPE)
 endif()
 
+# Boost headers
+add_subdirectory(boost-headers)
+
 # TZDB (Time Zone Database)
 add_subdirectory(nx_tzdb)
 
