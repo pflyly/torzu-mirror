@@ -150,23 +150,8 @@ if (YUZU_USE_BUNDLED_FFMPEG)
     set(FFmpeg_INCLUDE_DIR "${FFmpeg_INCLUDE_DIR}" PARENT_SCOPE)
 endif()
 
-# Vulkan-Headers
-if (YUZU_USE_EXTERNAL_VULKAN_HEADERS)
-    add_subdirectory(Vulkan-Headers)
-endif()
-
-# Vulkan-Utility-Libraries
-if (YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
-    add_subdirectory(Vulkan-Utility-Libraries)
-endif()
-
 # TZDB (Time Zone Database)
 add_subdirectory(nx_tzdb)
-
-# VMA
-if (NOT TARGET GPUOpen::VulkanMemoryAllocator)
-    add_subdirectory(VulkanMemoryAllocator)
-endif()
 
 if (NOT TARGET LLVM::Demangle)
     add_library(demangle demangle/ItaniumDemangle.cpp)
