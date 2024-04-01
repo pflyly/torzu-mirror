@@ -106,7 +106,7 @@ std::unique_ptr<Process> CreateApplicationProcess(std::vector<u8>& out_control,
         out_control = nacp.GetRawBytes();
     } else {
         out_control.resize(sizeof(FileSys::RawNACP));
-        memset(out_control.data(), 0, out_control.size());
+        std::fill(out_control.begin(), out_control.end(), 0);
     }
 
     auto& storage = system.GetContentProviderUnion();
