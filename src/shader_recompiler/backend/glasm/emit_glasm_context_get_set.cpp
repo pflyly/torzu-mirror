@@ -420,6 +420,10 @@ void EmitIsHelperInvocation(EmitContext& ctx, IR::Inst& inst) {
     ctx.Add("MOV.S {}.x,fragment.helperthread.x;", inst);
 }
 
+void EmitSR_WScaleFactorXY(EmitContext& ctx, IR::Inst& inst) {
+    LOG_WARNING(Shader, "(STUBBED) called");
+}
+
 void EmitYDirection(EmitContext& ctx, IR::Inst& inst) {
     ctx.uses_y_direction = true;
     ctx.Add("MOV.F {}.x,y_direction[0].w;", inst);

@@ -382,6 +382,10 @@ U1 IREmitter::IsHelperInvocation() {
     return Inst<U1>(Opcode::IsHelperInvocation);
 }
 
+U32 IREmitter::SR_WScaleFactorXY() {
+    return Inst<U32>(Opcode::SR_WScaleFactorXY);
+}
+
 F32 IREmitter::YDirection() {
     return Inst<F32>(Opcode::YDirection);
 }
