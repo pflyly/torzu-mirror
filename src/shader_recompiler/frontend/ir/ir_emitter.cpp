@@ -386,6 +386,10 @@ U32 IREmitter::SR_WScaleFactorXY() {
     return Inst<U32>(Opcode::SR_WScaleFactorXY);
 }
 
+U32 IREmitter::SR_WScaleFactorZ() {
+    return Inst<U32>(Opcode::SR_WScaleFactorZ);
+}
+
 F32 IREmitter::YDirection() {
     return Inst<F32>(Opcode::YDirection);
 }

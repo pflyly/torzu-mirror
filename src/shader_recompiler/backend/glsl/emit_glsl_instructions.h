@@ -87,6 +87,7 @@ void EmitInvocationInfo(EmitContext& ctx, IR::Inst& inst);
 void EmitSampleId(EmitContext& ctx, IR::Inst& inst);
 void EmitIsHelperInvocation(EmitContext& ctx, IR::Inst& inst);
 void EmitSR_WScaleFactorXY(EmitContext& ctx, IR::Inst& inst);
+void EmitSR_WScaleFactorZ(EmitContext& ctx, IR::Inst& inst);
 void EmitYDirection(EmitContext& ctx, IR::Inst& inst);
 void EmitResolutionDownFactor(EmitContext& ctx, IR::Inst& inst);
 void EmitRenderArea(EmitContext& ctx, IR::Inst& inst);

@@ -63,6 +63,7 @@ OPCODE(InvocationInfo,                                      U32,                
 OPCODE(SampleId,                                            U32,                                                                                            )
 OPCODE(IsHelperInvocation,                                  U1,                                                                                             )
 OPCODE(SR_WScaleFactorXY,                                   U32,                                                                                            )
+OPCODE(SR_WScaleFactorZ,                                    U32,                                                                                            )
 OPCODE(YDirection,                                          F32,                                                                                            )
 OPCODE(ResolutionDownFactor,                                F32,                                                                                            )
 OPCODE(RenderArea,                                          F32x4,                                                                                          )
