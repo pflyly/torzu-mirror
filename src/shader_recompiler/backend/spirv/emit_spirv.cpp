@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <spirv-tools/optimizer.hpp>
 
 #include "common/settings.h"
 #include "shader_recompiler/backend/spirv/emit_spirv.h"
@@ -481,7 +482,7 @@ void PatchPhiNodes(IR::Program& program, EmitContext& ctx) {
 } // Anonymous namespace
 
 std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_info,
-                           IR::Program& program, Bindings& bindings) {
+                           IR::Program& program, Bindings& bindings, bool optimize) {
     EmitContext ctx{profile, runtime_info, program, bindings};
     const Id main{DefineMain(ctx, program)};
     DefineEntryPoint(program, ctx, main);
@@ -493,7 +494,20 @@ std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_in
     SetupCapabilities(profile, program.info, ctx);
     SetupTransformFeedbackCapabilities(ctx, main);
     PatchPhiNodes(program, ctx);
-    return ctx.Assemble();
+
+    if (!optimize) {
+        return ctx.Assemble();
+    } else {
+        auto code = ctx.Assemble();
+        static auto spv_opt = [] () { // TODO: Declare somewhere else
+            auto fres = new spvtools::Optimizer(SPV_ENV_VULKAN_1_3);
+            fres->RegisterPerformancePasses();
+            return fres;
+        }();
+        const auto ok = spv_opt->Run(code.data(), code.size(), &code);
+        ASSERT(ok);
+        return code;
+    }
 }
 
 Id EmitPhi(EmitContext& ctx, IR::Inst* inst) {
