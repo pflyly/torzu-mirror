@@ -145,7 +145,7 @@ std::unique_ptr<TranslationMap> InitializeTranslations(QWidget* parent) {
               "it is only intended for debugging."));
     INSERT(Settings, optimize_spirv_output, tr("Optimize SPIRV output shader"),
            tr("Runs an additional optimization pass over generated SPIRV shaders.\n"
-              "Will increase time required for shader compilation.\nMay slightly improve"
+              "Will increase time required for shader compilation.\nMay slightly improve "
               "performance.\nThis feature is experimental."));
     INSERT(
         Settings, use_asynchronous_gpu_emulation, tr("Use asynchronous GPU emulation"),
