@@ -1,11 +1,13 @@
 // SPDX-FileCopyrightText: Copyright 2021 yuzu Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <iostream>
 #include <span>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <fstream>
 #include <spirv-tools/optimizer.hpp>
 
 #include "common/settings.h"
@@ -481,6 +483,22 @@ void PatchPhiNodes(IR::Program& program, EmitContext& ctx) {
 }
 } // Anonymous namespace
 
+static void dump_spirv(size_t hash, const std::vector<u32>& code, bool optimized = false) {
+    std::ofstream file("shaderdump/"+std::to_string(hash)+(optimized?"-opt.spv":".spv"));
+    file.write(reinterpret_cast<const char*>(code.data()), static_cast<std::streamsize>(code.size()*sizeof(code[0])));
+}
+
+class uint32_vector_hasher {
+public:
+std::size_t operator()(std::vector<uint32_t> const& vec) const {
+    std::size_t seed = vec.size();
+    for(auto& i : vec) {
+        seed ^= i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+    return seed;
+}
+};
+
 std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_info,
                            IR::Program& program, Bindings& bindings, bool optimize) {
     EmitContext ctx{profile, runtime_info, program, bindings};
@@ -498,15 +516,21 @@ std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_in
     if (!optimize) {
         return ctx.Assemble();
     } else {
-        auto code = ctx.Assemble();
+        const std::vector<u32> spirv = ctx.Assemble();
+        const auto hash = uint32_vector_hasher{}(spirv);
+        dump_spirv(hash, spirv);
         static auto spv_opt = [] () { // TODO: Declare somewhere else
             auto fres = new spvtools::Optimizer(SPV_ENV_VULKAN_1_3);
             fres->RegisterPerformancePasses();
+            fres->SetValidateAfterAll(false);
+            fres->SetPrintAll(&std::cout);
             return fres;
         }();
-        const auto ok = spv_opt->Run(code.data(), code.size(), &code);
+        std::vector<u32> result;
+        const bool ok = spv_opt->Run(spirv.data(), spirv.size(), &result);
         ASSERT(ok);
-        return code;
+        dump_spirv(hash, result, true);
+        return result;
     }
 }
 
