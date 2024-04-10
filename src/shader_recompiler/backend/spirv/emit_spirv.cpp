@@ -1,13 +1,11 @@
 // SPDX-FileCopyrightText: Copyright 2021 yuzu Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include <iostream>
 #include <span>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <fstream>
 #include <spirv-tools/optimizer.hpp>
 
 #include "common/settings.h"
@@ -483,22 +481,6 @@ void PatchPhiNodes(IR::Program& program, EmitContext& ctx) {
 }
 } // Anonymous namespace
 
-static void dump_spirv(size_t hash, const std::vector<u32>& code, bool optimized = false) {
-    std::ofstream file("shaderdump/"+std::to_string(hash)+(optimized?"-opt.spv":".spv"));
-    file.write(reinterpret_cast<const char*>(code.data()), static_cast<std::streamsize>(code.size()*sizeof(code[0])));
-}
-
-class uint32_vector_hasher {
-public:
-std::size_t operator()(std::vector<uint32_t> const& vec) const {
-    std::size_t seed = vec.size();
-    for(auto& i : vec) {
-        seed ^= i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
-    return seed;
-}
-};
-
 std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_info,
                            IR::Program& program, Bindings& bindings, bool optimize) {
     EmitContext ctx{profile, runtime_info, program, bindings};
@@ -516,20 +498,23 @@ std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_in
     if (!optimize) {
         return ctx.Assemble();
     } else {
-        const std::vector<u32> spirv = ctx.Assemble();
-        const auto hash = uint32_vector_hasher{}(spirv);
-        dump_spirv(hash, spirv);
-        static auto spv_opt = [] () { // TODO: Declare somewhere else
-            auto fres = new spvtools::Optimizer(SPV_ENV_VULKAN_1_3);
-            fres->RegisterPerformancePasses();
-            fres->SetValidateAfterAll(false);
-            fres->SetPrintAll(&std::cout);
-            return fres;
-        }();
+        std::vector<u32> spirv = ctx.Assemble();
+
+        spvtools::Optimizer spv_opt(SPV_ENV_VULKAN_1_3);
+        spv_opt.SetMessageConsumer([](spv_message_level_t, const char*,
+                                      const spv_position_t&, const char* m) {
+            LOG_ERROR(HW_GPU, "spirv-opt: {}", m);
+        });
+        spv_opt.RegisterPerformancePasses();
+
+        spvtools::OptimizerOptions opt_options;
+        opt_options.set_run_validator(false);
+
         std::vector<u32> result;
-        const bool ok = spv_opt->Run(spirv.data(), spirv.size(), &result);
-        ASSERT(ok);
-        dump_spirv(hash, result, true);
+        if (!spv_opt.Run(spirv.data(), spirv.size(), &result, opt_options)) {
+            LOG_ERROR(HW_GPU, "Failed to optimize SPIRV shader output, continuing without optimization");
+            result = std::move(spirv);
+        }
         return result;
     }
 }
