@@ -33,7 +33,8 @@ constexpr u32 RENDERAREA_LAYOUT_OFFSET = offsetof(RenderAreaLayout, render_area)
 [[nodiscard]] std::vector<u32> EmitSPIRV(const Profile& profile, const RuntimeInfo& runtime_info,
                                          IR::Program& program, Bindings& bindings, bool optimize);
 
-[[nodiscard]] inline std::vector<u32> EmitSPIRV(const Profile& profile, IR::Program& program, bool optimize) {
+[[nodiscard]] inline std::vector<u32> EmitSPIRV(const Profile& profile, IR::Program& program,
+                                                bool optimize) {
     Bindings binding;
     return EmitSPIRV(profile, {}, program, binding, optimize);
 }

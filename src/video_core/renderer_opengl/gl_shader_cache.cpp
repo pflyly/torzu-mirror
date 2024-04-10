@@ -537,7 +537,9 @@ std::unique_ptr<GraphicsPipeline> ShaderCache::CreateGraphicsPipeline(
             break;
         case Settings::ShaderBackend::SpirV:
             ConvertLegacyToGeneric(program, runtime_info);
-            sources_spirv[stage_index] = EmitSPIRV(profile, runtime_info, program, binding, Settings::values.optimize_spirv_output.GetValue());
+            sources_spirv[stage_index] =
+                EmitSPIRV(profile, runtime_info, program, binding,
+                          Settings::values.optimize_spirv_output.GetValue());
             break;
         }
         previous_program = &program;
