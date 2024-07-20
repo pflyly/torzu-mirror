@@ -62,12 +62,12 @@ void ConfigureWeb::RetranslateUI() {
     ui->retranslateUi(this);
 
     ui->web_signup_link->setText(
-        tr("<a href='https://profile.yuzu-emu.org/'><span style=\"text-decoration: underline; "
-           "color:#039be5;\">Sign up</span></a>"));
+        tr("<a href='https://themyndgame.com/modules.php?name=Yuzu%20Config'><span style=\"text-decoration: underline; "
+           "color:#039be5;\">Get Token</span></a>"));
 
     ui->web_token_info_link->setText(
-        tr("<a href='https://yuzu-emu.org/wiki/yuzu-web-service/'><span style=\"text-decoration: "
-           "underline; color:#039be5;\">What is my token?</span></a>"));
+        tr("<a href='https://themyndgame.com/modules.php?name=Yuzu%20Config'><span style=\"text-decoration: underline; "
+           "color:#039be5;\">Token Generator</span></a>"));
 }
 
 void ConfigureWeb::SetConfiguration() {
