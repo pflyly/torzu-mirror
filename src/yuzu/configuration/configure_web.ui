@@ -46,7 +46,7 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>(ignore this)</string>
+             <string>Verify</string>
             </property>
            </widget>
           </item>
