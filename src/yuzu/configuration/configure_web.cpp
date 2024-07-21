@@ -99,9 +99,14 @@ void ConfigureWeb::SetConfiguration() {
 void ConfigureWeb::ApplyConfiguration() {
     UISettings::values.enable_discord_presence = ui->toggle_discordrpc->isChecked();
     if (user_verified) {
-        Settings::values.yuzu_username =
-            UsernameFromDisplayToken(ui->edit_token->text().toStdString());
-        Settings::values.yuzu_token = TokenFromDisplayToken(ui->edit_token->text().toStdString());
+        if (Settings::values.yuzu_username.GetValue().empty()) {
+            Settings::values.yuzu_username = "torzu";
+            Settings::values.yuzu_token = std::string("torzu-") + Settings::getCurrentEpochTimestamp();
+        } else {
+            Settings::values.yuzu_username =
+                UsernameFromDisplayToken(ui->edit_token->text().toStdString());
+            Settings::values.yuzu_token = TokenFromDisplayToken(ui->edit_token->text().toStdString());
+        }
     } else {
         QMessageBox::warning(
             this, tr("Token not verified"),
