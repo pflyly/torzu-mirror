@@ -91,6 +91,9 @@ void ConfigureWeb::SetConfiguration() {
     user_verified = true;
 
     ui->toggle_discordrpc->setChecked(UISettings::values.enable_discord_presence.GetValue());
+
+    ui->web_signup_link->setVisible(false);
+    ui->button_verify_login->setVisible(false);
 }
 
 void ConfigureWeb::ApplyConfiguration() {
