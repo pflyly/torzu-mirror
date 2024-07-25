@@ -93,7 +93,8 @@ void ConfigureWeb::SetConfiguration() {
     ui->toggle_discordrpc->setChecked(UISettings::values.enable_discord_presence.GetValue());
 
     ui->web_signup_link->setVisible(false);
-    ui->button_verify_login->setVisible(false);
+    ui->web_token_info_link->setVisible(false);
+    //ui->button_verify_login->setVisible(false);
 }
 
 void ConfigureWeb::ApplyConfiguration() {
@@ -133,19 +134,21 @@ void ConfigureWeb::OnLoginChanged() {
 
 void ConfigureWeb::VerifyLogin() {
     ui->button_verify_login->setDisabled(true);
-    ui->button_verify_login->setText(tr("Verifying..."));
-    ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("sync")).pixmap(16));
-    ui->label_token_verified->setToolTip(tr("Verifying..."));
+    //ui->button_verify_login->setText(tr("Verifying..."));
+    //ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("sync")).pixmap(16));
+    //ui->label_token_verified->setToolTip(tr("Verifying..."));
+    //ui->button_verify_login->setText(tr("Verifying..."));
+    Settings::values.yuzu_token = std::string("torzu-") + Settings::getCurrentEpochTimestamp();
 }
 
 void ConfigureWeb::OnLoginVerified() {
     ui->button_verify_login->setEnabled(true);
-    ui->button_verify_login->setText(tr("Verify"));
+    //ui->button_verify_login->setText(tr("Verify"));
     if (verify_watcher.result()) {
         user_verified = true;
 
         ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("checked")).pixmap(16));
-        ui->label_token_verified->setToolTip(tr("Verified", "Tooltip"));
+        ui->label_token_verified->setToolTip(tr("Token Changed", "Tooltip"));
         ui->username->setText(
             QString::fromStdString(UsernameFromDisplayToken(ui->edit_token->text().toStdString())));
     } else {
