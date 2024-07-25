@@ -146,17 +146,18 @@ void ConfigureWeb::OnLoginChanged() {
 
 // repurposed for resetting token
 void ConfigureWeb::VerifyLogin() {
+    // ORIGINAL CODE FOR THIS FUNCTION
     //ui->button_verify_login->setDisabled(true);
     //ui->button_verify_login->setText(tr("Verifying..."));
     //ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("sync")).pixmap(16));
     //ui->label_token_verified->setToolTip(tr("Verifying..."));
-    //ui->button_verify_login->setText(tr("Verifying..."));
     //verify_watcher.setFuture(QtConcurrent::run(
     //    [username = UsernameFromDisplayToken(ui->edit_token->text().toStdString()),
     //     token = TokenFromDisplayToken(ui->edit_token->text().toStdString())] {
     //        return Core::VerifyLogin(username, token);
     //    }));
-
+    // END ORIGINAL CODE
+    
     // set a new token timestamp
     Settings::values.yuzu_token = std::string("token-") + getGeneratedTokenCode();
     // just to display the label_token_verified pic and tooltip for visual confirmation
