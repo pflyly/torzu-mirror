@@ -62,11 +62,11 @@ void ConfigureWeb::RetranslateUI() {
     ui->retranslateUi(this);
 
     ui->web_signup_link->setText(
-        tr("<a href='https://themyndgame.com/modules.php?name=Yuzu%20Config'><span style=\"text-decoration: underline; "
+        tr("<a href='UNUSED'><span style=\"text-decoration: underline; "
            "color:#039be5;\">Get Token</span></a>"));
 
     ui->web_token_info_link->setText(
-        tr("<a href='https://themyndgame.com/modules.php?name=Yuzu%20Config'><span style=\"text-decoration: underline; "
+        tr("<a href='UNUSED'><span style=\"text-decoration: underline; "
            "color:#039be5;\">Token Generator</span></a>"));
 }
 
@@ -94,7 +94,6 @@ void ConfigureWeb::SetConfiguration() {
 
     ui->web_signup_link->setVisible(false);
     ui->web_token_info_link->setVisible(false);
-    //ui->button_verify_login->setVisible(false);
 }
 
 void ConfigureWeb::ApplyConfiguration() {
@@ -104,8 +103,9 @@ void ConfigureWeb::ApplyConfiguration() {
             Settings::values.yuzu_username = "torzu";
             Settings::values.yuzu_token = std::string("torzu-") + Settings::getCurrentEpochTimestamp();
         } else {
-            Settings::values.yuzu_username =
-                UsernameFromDisplayToken(ui->edit_token->text().toStdString());
+            //Settings::values.yuzu_username =
+            //    UsernameFromDisplayToken(ui->edit_token->text().toStdString());
+            Settings::values.yuzu_username = Settings::values.yuzu_username.GetValue();
             Settings::values.yuzu_token = TokenFromDisplayToken(ui->edit_token->text().toStdString());
         }
     } else {
@@ -132,19 +132,31 @@ void ConfigureWeb::OnLoginChanged() {
     }
 }
 
+// repurposed for resetting token
 void ConfigureWeb::VerifyLogin() {
-    ui->button_verify_login->setDisabled(true);
+    //ui->button_verify_login->setDisabled(true);
     //ui->button_verify_login->setText(tr("Verifying..."));
     //ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("sync")).pixmap(16));
     //ui->label_token_verified->setToolTip(tr("Verifying..."));
     //ui->button_verify_login->setText(tr("Verifying..."));
+    //verify_watcher.setFuture(QtConcurrent::run(
+    //    [username = UsernameFromDisplayToken(ui->edit_token->text().toStdString()),
+    //     token = TokenFromDisplayToken(ui->edit_token->text().toStdString())] {
+    //        return Core::VerifyLogin(username, token);
+    //    }));
+
+    // set a new token timestamp
     Settings::values.yuzu_token = std::string("torzu-") + Settings::getCurrentEpochTimestamp();
+    // just to display the label_token_verified pic and tooltip for visual confirmation
+    OnLoginVerified();
+    // apply the changes
+    SetConfiguration();
 }
 
 void ConfigureWeb::OnLoginVerified() {
-    ui->button_verify_login->setEnabled(true);
+    //ui->button_verify_login->setEnabled(true);
     //ui->button_verify_login->setText(tr("Verify"));
-    if (verify_watcher.result()) {
+    if (true) { //(verify_watcher.result()) {
         user_verified = true;
 
         ui->label_token_verified->setPixmap(QIcon::fromTheme(QStringLiteral("checked")).pixmap(16));
