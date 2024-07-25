@@ -106,12 +106,6 @@ std::string GetTimeZoneString(TimeZone time_zone) {
     return location_name;
 }
 
-std::string getGeneratedTokenCode()
-{
-    using std::chrono::system_clock;
-    return std::string(std::to_string(std::chrono::system_clock::now().time_since_epoch().count()));
-}
-
 void LogSettings() {
     const auto log_setting = [](std::string_view name, const auto& value) {
         LOG_INFO(Config, "{}: {}", name, value);
