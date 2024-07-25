@@ -28,7 +28,7 @@
         <item>
          <widget class="QLabel" name="web_credentials_disclaimer">
           <property name="text">
-           <string>To host a room in a public lobby, generate a token and add it to the [WebServices] section of the '/config/qt-config.ini' file. To find the 'config' folder, go to: Main Menu -> File -> Open torzu User Folder (close torzu before making changes.)</string>
+           <string>Tokens for hosting public rooms in a lobby are automatically generated the first time you save Configuration settings. To change the token username, switch to a different profile under the System >> Profiles tab. If you have already opened the multiplayer lobby, exit and restart the emulator for the name change to apply there. To generate a new token for any reason, use the "Reset Token" button.</string>
           </property>
          </widget>
         </item>
