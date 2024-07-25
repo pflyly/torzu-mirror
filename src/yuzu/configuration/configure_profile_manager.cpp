@@ -178,7 +178,7 @@ void ConfigureProfileManager::UpdateCurrentUser() {
         GetIcon(*current_user).scaled(48, 48, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     ui->current_user_username->setText(username);
 
-    // update the token username
+    // update the token username, process completed by ConfigureWeb::ApplyConfiguration()
     Settings::values.yuzu_username = username.toStdString();
 }
 
