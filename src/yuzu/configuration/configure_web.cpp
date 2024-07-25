@@ -158,7 +158,7 @@ void ConfigureWeb::VerifyLogin() {
     //    }));
     // END ORIGINAL CODE
     
-    // set a new token timestamp
+    // set a new token
     Settings::values.yuzu_token = std::string("token-") + getGeneratedTokenCode();
     // just to display the label_token_verified pic and tooltip for visual confirmation
     OnLoginVerified();
