@@ -101,7 +101,7 @@ void ConfigureWeb::ApplyConfiguration() {
     if (user_verified) {
         if (Settings::values.yuzu_username.GetValue().empty()) {
             Settings::values.yuzu_username = "torzu";
-            Settings::values.yuzu_token = std::string("token-") + Settings::getCurrentEpochTimestamp();
+            Settings::values.yuzu_token = std::string("token-") + Settings::getGeneratedTokenCode();
         } else {
             //Settings::values.yuzu_username =
             //    UsernameFromDisplayToken(ui->edit_token->text().toStdString());
@@ -146,7 +146,7 @@ void ConfigureWeb::VerifyLogin() {
     //    }));
 
     // set a new token timestamp
-    Settings::values.yuzu_token = std::string("token-") + Settings::getCurrentEpochTimestamp();
+    Settings::values.yuzu_token = std::string("token-") + Settings::getGeneratedTokenCode();
     // just to display the label_token_verified pic and tooltip for visual confirmation
     OnLoginVerified();
     // apply the changes
