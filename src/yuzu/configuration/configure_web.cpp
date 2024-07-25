@@ -100,12 +100,18 @@ void ConfigureWeb::ApplyConfiguration() {
     UISettings::values.enable_discord_presence = ui->toggle_discordrpc->isChecked();
     if (user_verified) {
         if (Settings::values.yuzu_username.GetValue().empty()) {
+            // backup: default name should already be set by ConfigureProfileManager::UpdateCurrentUser()
             Settings::values.yuzu_username = "torzu";
+        } else {
+            // if a name already exist, reassign it to itself (needed for change set with a profile switch)
+            Settings::values.yuzu_username = Settings::values.yuzu_username.GetValue();
+        }
+
+        if (Settings::values.yuzu_token.GetValue().empty()) {
+            // if empty, automatically generate a new one
             Settings::values.yuzu_token = std::string("token-") + Settings::getGeneratedTokenCode();
         } else {
-            //Settings::values.yuzu_username =
-            //    UsernameFromDisplayToken(ui->edit_token->text().toStdString());
-            Settings::values.yuzu_username = Settings::values.yuzu_username.GetValue();
+            // if already exists, use that value
             Settings::values.yuzu_token = TokenFromDisplayToken(ui->edit_token->text().toStdString());
         }
     } else {
