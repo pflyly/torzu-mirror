@@ -46,7 +46,7 @@
              <enum>Qt::RightToLeft</enum>
             </property>
             <property name="text">
-             <string>Verify</string>
+             <string>Reset Token</string>
             </property>
            </widget>
           </item>
