@@ -643,7 +643,6 @@ bool IsDockedMode();
 float Volume();
 
 std::string GetTimeZoneString(TimeZone time_zone);
-std::string getGeneratedTokenCode();
 
 void LogSettings();
 
