@@ -11,7 +11,7 @@
 
 static constexpr char token_delimiter{':'};
 
-std::string getGeneratedTokenCode()
+static std::string GetGeneratedTokenCode()
 {
     using std::chrono::system_clock;
     return std::string("token-") + std::string(std::to_string(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -115,7 +115,7 @@ void ConfigureWeb::ApplyConfiguration() {
 
         if (Settings::values.yuzu_token.GetValue().empty()) {
             // if empty, automatically generate a new one
-            Settings::values.yuzu_token = getGeneratedTokenCode();
+            Settings::values.yuzu_token = GetGeneratedTokenCode();
         } else {
             // if already exists, use that value
             Settings::values.yuzu_token = TokenFromDisplayToken(ui->edit_token->text().toStdString());
@@ -159,7 +159,7 @@ void ConfigureWeb::VerifyLogin() {
     // END ORIGINAL CODE
     
     // set a new token
-    Settings::values.yuzu_token = getGeneratedTokenCode();
+    Settings::values.yuzu_token = GetGeneratedTokenCode();
     // just to display the label_token_verified pic and tooltip for visual confirmation
     OnLoginVerified();
     // apply the changes
