@@ -53,7 +53,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="web_signup_link">
             <property name="text">
-             <string>Get Token</string>
+             <string>Sign up</string>
             </property>
            </widget>
           </item>
@@ -90,7 +90,7 @@
           <item row="2" column="1">
            <widget class="QLabel" name="web_token_info_link">
             <property name="text">
-             <string>Token Generator</string>
+             <string>What is my token?</string>
             </property>
            </widget>
           </item>
