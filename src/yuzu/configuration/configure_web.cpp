@@ -72,8 +72,8 @@ void ConfigureWeb::RetranslateUI() {
            "color:#039be5;\">Sign up</span></a>"));
 
     ui->web_token_info_link->setText(
-        tr("<a href='UNUSED'><span style=\"text-decoration: underline; "
-           "color:#039be5;\">What is my token?</span></a>"));
+        tr("<a href='UNUSED'><span style=\"text-decoration: "
+           "underline; color:#039be5;\">What is my token?</span></a>"));
 }
 
 void ConfigureWeb::SetConfiguration() {
