@@ -70,7 +70,8 @@ if [ $QTFOUND == "true" ]; then
 
   # Copy QT dependency folders, path determined above
   echo "Copying Qt dependencies..."
-  cp -rv "$QTDIR"/{imageformats,platforms,platformthemes,xcbglintegrations} ./build/
+  mkdir ./build/qt5
+  cp -rv "$QTDIR"/{imageformats,platforms,platformthemes,xcbglintegrations} ./build/qt5/
 
   # Discover indirect dependencies (mostly from runtime-loaded Qt plugins)
   echo "Copying extra dependencies..."
