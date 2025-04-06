@@ -26,24 +26,6 @@ I highly advice against downloading anything from these websites, specially if t
 There have been issues with the infrastructure running the main repository while I've been away from home. It should be all back and functional now!
 Sorry for that!
 
-## Limited public development
-
-I feel like working publicly on this has taken away the fun. You may not understand, but it's quite stressful to have the public eye on a project.
-Keep in mind, this is just a hobby project. I feel like I always have to keep updating so I don't disappoint you. It's just not a good situation for a hobby project to be in.
-Turns out: running an open source project takes a lot more time than I have.
-And then stupid and unnecessary issues like Windows Defender flagging the emulator as malware ruin the rest. I am grateful for all your bug reports, help and support, but all that has distracted me from taking the project into the direction I would've liked.
-
-It is not all over though. My plan is to:
- - Continue the blog
- - Keep this repository updated enough so it stays compilable on Linux and Windows
- - Keep the externals updated
- - NOT publish releases. If someone feels like publishing builds they should feel free to do that
- - NOT offer support in any way
-   - Feel free to open issues on the main repository though if you feel like an issue REALLY needs my attention
- - Accept pull requests as long as they are of reasonable quality
-
-Again, thanks to everyone who has supported my efforts so far in any way (even by creating bug reports), I really appreciate it.
-
 ## Compatibility
 
 The emulator is capable of running most commercial games at full speed, provided you meet the [necessary hardware requirements](http://web.archive.org/web/20240130133811/https://yuzu-emu.org/help/quickstart/#hardware-requirements).
