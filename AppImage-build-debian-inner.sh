@@ -31,7 +31,3 @@ cd /tmp/AppImageBuilder
 ./build.sh /tmp/torzu-build /tmp/torzu.AppImage || echo "This error is known. Using workaround..."
 cp /lib/$(uname -m)-linux-gnu/libICE.so.6 build/
 mv build /tmp/hosttmp/torzu-debian-appimage-rootfs
-
-# Debug
-cd /tmp/hosttmp/torzu-debian-appimage-rootfs
-bash
