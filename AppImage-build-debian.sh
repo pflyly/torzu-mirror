@@ -8,7 +8,8 @@ rm -rf "$TORZU_SOURCE_DIR/AppImageBuilder/build"
 
 # Generate debian rootfs
 cd /tmp
-rm -rf rootfs-torzu-appimage-build
+echo "Cleaning up before build..."
+rm -rf torzu-debian-appimage-rootfs rootfs-torzu-appimage-build
 debootstrap stable rootfs-torzu-appimage-build http://deb.debian.org/debian/
 bwrap --bind rootfs-torzu-appimage-build / \
         --unshare-pid \
@@ -22,6 +23,6 @@ bwrap --bind rootfs-torzu-appimage-build / \
         --setenv HOME /home \
         --bind /tmp /tmp/hosttmp \
         /tmp/torzu-src/AppImage-build-debian-inner.sh
-appimagetool /tmp/torzu-debian-appimage-rootfs /tmp/torzu.AppImage
+appimagetool torzu-debian-appimage-rootfs torzu.AppImage
 echo "AppImage generated at /tmp/torzu.AppImage! Cleaning up..."
-exec rm -rf /tmp/torzu-debian-appimage-rootfs /tmp/rootfs-torzu-appimage-build
+exec rm -rf torzu-debian-appimage-rootfs rootfs-torzu-appimage-build
