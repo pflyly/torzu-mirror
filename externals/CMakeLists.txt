@@ -146,7 +146,7 @@ endif()
 if (ENABLE_WEB_SERVICE AND NOT TARGET cpp-jwt::cpp-jwt)
     set(CPP_JWT_BUILD_EXAMPLES OFF)
     set(CPP_JWT_BUILD_TESTS OFF)
-    set(CPP_JWT_USE_VENDORED_NLOHMANN_JSON OFF)
+    set(CPP_JWT_USE_VENDORED_NLOHMANN_JSON ${YUZU_USE_CPM})
     add_subdirectory(cpp-jwt)
 endif()
 

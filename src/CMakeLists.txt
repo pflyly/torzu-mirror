@@ -134,9 +134,12 @@ else()
             -Wno-braced-scalar-init
             -Wno-unused-private-field
             -Wno-nullability-completeness
-            -Werror=shadow-uncaptured-local
-            -Werror=implicit-fallthrough
             -Werror=type-limits
+            # Boost...
+            #-Werror=shadow-uncaptured-local
+            #-Werror=implicit-fallthrough
+            -Wshadow-uncaptured-local
+            -Wimplicit-fallthrough
         )
     endif()
 

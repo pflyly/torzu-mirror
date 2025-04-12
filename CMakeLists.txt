@@ -366,11 +366,21 @@ else()
     # Disable tests in all externals supporting the standard option name
     set(BUILD_TESTING OFF)
 
+    # Some externals take these options instead
+    set(BUILD_TESTS OFF)
+    set(BUILD_TOOLS OFF)
+
     # Build only static externals
     set(BUILD_SHARED_LIBS OFF)
 
     # Do not attempt to use Brotli in httplib since we're not downloading it
     set(HTTPLIB_USE_BROTLI_IF_AVAILABLE OFF)
+
+    # Configure Opus to not generate as much overhead
+    set(OPUS_BUILD_TESTING OFF)
+    set(OPUS_BUILD_PROGRAMS OFF)
+    set(OPUS_INSTALL_PKG_CONFIG_MODULE OFF)
+    set(OPUS_INSTALL_CMAKE_CONFIG_MODULE OFF)
 
     message(STATUS "Downloading and extracting boost library sources. This will take some time...")
     CPMAddPackage(
