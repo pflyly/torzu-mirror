@@ -67,7 +67,7 @@ git submodule update --init --recursive
 
 Note that above repository may be taken down any time. Do not rely on its existence in production. In case the NotABug mirror goes down, another mirror will be most likely be set up on Bitbucket.
 
-This project incorporates several commits from the [Suyu](https://suyu.dev) and [Sudachi](https://github.com/sudachi-emu/sudachi) forks, as well as changes listed in **Changes**.
+This project incorporates several commits from the [Suyu](https://suyu.dev), [Sudachi](https://github.com/sudachi-emu/sudachi) and [Citron](https://github.com/ong19th/Citron) forks, as well as changes listed in **Changes**.
 
 ## Move away from Codeberg
 
