@@ -49,7 +49,7 @@ mount -t overlay overlay -olowerdir=torzu-src-ro,upperdir=torzu-src-upper,workdi
 EXTRA_COMPILE_FLAGS=""
 EXTRA_CMAKE_FLAGS=""
 if [ "$BUILD_USE_CLANG" = 1 ]; then
-    EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19"
+    EXTRA_CMAKE_FLAGS="-DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19"
     FATLTO_FLAG="-flto=full"
 else
     FATLTO_FLAG="-flto"
@@ -61,14 +61,14 @@ if [ "$BUILD_USE_FAT_LTO" = 1 ]; then
     EXTRA_COMPILE_FLAGS="$FATLTO_FLAG"
 fi
 if [ "$BUILD_USE_CPM" = 1 ]; then
-    EXTRA_CMAKE_FLAGS="-DYUZU_USE_CPM=ON"
+    EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DYUZU_USE_CPM=ON"
 fi
 
 # Build Torzu
 cd /tmp
 mkdir torzu-build
 cd torzu-build
-cmake /tmp/torzu-src -GNinja -DCMAKE_BUILD_TYPE=Release -DYUZU_TESTS=OFF -DENABLE_QT_TRANSLATION=OFF -DSPIRV_WERROR=OFF -DCMAKE_FIND_LIBRARY_SUFFIXES=".a;.so" -DSPIRV-Headers_SOURCE_DIR=/tmp/torzu-src/externals/SPIRV-Headers -DCMAKE_{C,CXX}_FLAGS="${EXTRA_COMPILE_FLAGS} -fdata-sections -ffunction-sections" -DCMAKE_{EXE,SHARED}_LINKER_FLAGS="-Wl,--gc-sections" $EXTRA_CMAKE_FLAGS
+cmake /tmp/torzu-src -GNinja -DCMAKE_BUILD_TYPE=Release -DYUZU_TESTS=OFF -DENABLE_QT_TRANSLATION=OFF -DSPIRV_WERROR=OFF -DCMAKE_FIND_LIBRARY_SUFFIXES=".a;.so" -DSPIRV-Headers_SOURCE_DIR=/tmp/torzu-src/externals/SPIRV-Headers -DCMAKE_{C,CXX}_FLAGS="$EXTRA_COMPILE_FLAGS -fdata-sections -ffunction-sections" -DCMAKE_{EXE,SHARED}_LINKER_FLAGS="-Wl,--gc-sections" $EXTRA_CMAKE_FLAGS
 ninja || (
     echo "Compilation has failed. Dropping you into a shell so you can inspect the situation. Run 'ninja' to retry and exit shell once compilation has finished successfully."
     echo "Note that any changes made here will not be reflected to the host environment, but changes made from the host environment will be reflected here."
