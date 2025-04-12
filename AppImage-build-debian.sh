@@ -5,6 +5,10 @@ set -e
 for i in "$@"
 do
 case $i in
+    -l|--clang)
+        export BUILD_USE_CLANG=1
+        echo "-> Using Clang for compilation."
+    ;;
     -o|--thin-lto)
         export BUILD_USE_THIN_LTO=1
         echo "-> Thin link time optimization enabled."
@@ -22,11 +26,21 @@ case $i in
         echo "-> Not deleting rootfs after successful build."
     ;;
     *)
-        echo "Usage: $0 [--thin-lto/-o] [--fat-lto/-O] [--use-cpm/-p] [--keep-rootfs/-k]"
+        echo "Usage: $0 [--clang/-l] [--thin-lto/-o] [--fat-lto/-O] [--use-cpm/-p] [--keep-rootfs/-k]"
         exit 1
     ;;
 esac
 done
+
+# Make sure options are valid
+if [ "$BUILD_USE_THIN_LTO" = 1 ] && [ "$BUILD_USE_CLANG" != 1 ]; then
+    echo "Thin LTO can't be used without Clang!"
+    exit 2
+fi
+if [ "$BUILD_USE_THIN_LTO" = 1 ] && [ "$BUILD_USE_FAT_LTO" = 1 ]; then
+    echo "Only either thin or fat LTO can be used!"
+    exit 2
+fi
 
 # Get torzu source dir
 TORZU_SOURCE_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
