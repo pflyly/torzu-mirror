@@ -13,12 +13,16 @@ case $i in
         export BUILD_USE_FAT_LTO=1
         echo "-> Fat link time optimization enabled."
     ;;
+    -p|--use-cpm)
+        export BUILD_USE_CPM=1
+        echo "-> Using CPM to download most dependencies."
+    ;;
     -k|--keep-rootfs)
         BUILD_KEEP_ROOTFS=1
         echo "-> Not deleting rootfs after successful build."
     ;;
     *)
-        echo "Usage: $0 [--thin-lto/-o] [--fat-lto/-O] [--keep-rootfs/-k]"
+        echo "Usage: $0 [--thin-lto/-o] [--fat-lto/-O] [--use-cpm/-p] [--keep-rootfs/-k]"
         exit 1
     ;;
 esac
