@@ -185,7 +185,13 @@ endif()
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-install(TARGETS dynarmic EXPORT dynarmicTargets)
+# Hack to get CPM.cmake working with this (should be fine though)
+set(BOOST_TARGET )
+if (TARGET boost_headers)
+    set(BOOST_TARGET boost_headers)
+endif()
+
+install(TARGETS dynarmic ${BOOST_TARGET} EXPORT dynarmicTargets)
 install(EXPORT dynarmicTargets
     NAMESPACE dynarmic::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"

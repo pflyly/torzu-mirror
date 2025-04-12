@@ -503,11 +503,22 @@ set_target_properties(dynarmic PROPERTIES
 target_compile_options(dynarmic PRIVATE ${DYNARMIC_CXX_FLAGS})
 target_link_libraries(dynarmic
     PRIVATE
-        Boost::boost
         fmt::fmt
         merry::mcl
         tsl::robin_map
 )
+if (TARGET boost_headers)
+    target_link_libraries(dynarmic
+        PRIVATE
+            boost_headers
+    )
+else()
+    target_link_libraries(dynarmic
+        PRIVATE
+            Boost::boost
+    )
+endif()
+
 if (DYNARMIC_USE_LLVM)
     target_include_directories(dynarmic PRIVATE ${LLVM_INCLUDE_DIRS})
     target_compile_definitions(dynarmic PRIVATE DYNARMIC_USE_LLVM=1 ${LLVM_DEFINITIONS})

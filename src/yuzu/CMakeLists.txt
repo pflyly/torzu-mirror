@@ -382,8 +382,11 @@ elseif(WIN32)
 endif()
 
 target_link_libraries(yuzu PRIVATE common core input_common frontend_common network video_core)
-target_link_libraries(yuzu PRIVATE Boost::headers glad Qt${QT_MAJOR_VERSION}::Widgets httplib::httplib)
+target_link_libraries(yuzu PRIVATE Boost::headers glad Qt${QT_MAJOR_VERSION}::Widgets)
 target_link_libraries(yuzu PRIVATE ${PLATFORM_LIBRARIES} Threads::Threads)
+if (ENABLE_WEB_SERVICE)
+    target_link_libraries(yuzu PRIVATE httplib::httplib)
+endif()
 
 target_link_libraries(yuzu PRIVATE Vulkan::Headers)
 if (NOT WIN32)

@@ -12,6 +12,13 @@ include(DownloadExternals)
 include(CMakeDependentOption)
 include(CTest)
 
+option(YUZU_USE_BUNDLED_VCPKG "Use vcpkg for yuzu dependencies" "${MSVC}")
+if (NOT YUZU_USE_BUNDLED_VCPKG)
+    option(YUZU_USE_CPM "Use CPM.cmake for yuzu dependencies" OFF)
+else()
+    set(YUZU_USE_CPM OFF)
+endif()
+
 # Set bundled sdl2/qt as dependent options.
 # OFF by default, but if ENABLE_SDL2 and MSVC are true then ON
 option(ENABLE_SDL2 "Enable the SDL2 frontend" ON)
@@ -34,11 +41,19 @@ option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" ON)
 
 option(YUZU_USE_BUNDLED_FFMPEG "Download/Build bundled FFmpeg" "${WIN32}")
 
-option(YUZU_USE_EXTERNAL_VULKAN_HEADERS "Use Vulkan-Headers from externals" ON)
+if (NOT YUZU_USE_CPM)
+    option(YUZU_USE_EXTERNAL_VULKAN_HEADERS "Use Vulkan-Headers from externals" ON)
 
-option(YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES "Use Vulkan-Utility-Libraries from externals" ON)
+    option(YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES "Use Vulkan-Utility-Libraries from externals" ON)
 
-option(YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS "Use SPIRV-Tools from externals" ON)
+    option(YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS "Use SPIRV-Tools from externals" ON)
+else()
+    set(YUZU_USE_EXTERNAL_VULKAN_HEADERS OFF)
+
+    set(YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES OFF)
+
+    set(YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS OFF)
+endif()
 
 option(YUZU_USE_QT_MULTIMEDIA "Use QtMultimedia for Camera" OFF)
 
@@ -59,8 +74,6 @@ CMAKE_DEPENDENT_OPTION(YUZU_ROOM "Compile LDN room server" ON "NOT ANDROID" OFF)
 option(YUZU_CMD "Compile the -cmd executable (can disable if -cmd is unused)" ON)
 
 CMAKE_DEPENDENT_OPTION(YUZU_CRASH_DUMPS "Compile crash dump (Minidump) support" OFF "WIN32 OR LINUX" OFF)
-
-option(YUZU_USE_BUNDLED_VCPKG "Use vcpkg for yuzu dependencies" "${MSVC}")
 
 option(YUZU_CHECK_SUBMODULES "Check if submodules are present" ON)
 
@@ -303,33 +316,84 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 # =======================================================================
 
 # Enforce the search mode of non-required packages for better and shorter failure messages
-find_package(Boost 1.79.0 REQUIRED context)
-find_package(enet 1.3 MODULE)
-find_package(fmt REQUIRED)
-if (YUZU_USE_LLVM_DEMANGLE)
-    find_package(LLVM 17.0.2 MODULE COMPONENTS Demangle)
+if (NOT YUZU_USE_CPM)
+    find_package(Boost 1.79.0 REQUIRED context)
+    find_package(enet 1.3 MODULE)
+    find_package(fmt REQUIRED)
+    if (YUZU_USE_LLVM_DEMANGLE)
+        find_package(LLVM 17.0.2 MODULE COMPONENTS Demangle)
+    endif()
+    find_package(lz4 REQUIRED)
+    find_package(nlohmann_json 3.8 REQUIRED)
+    find_package(Opus 1.3 MODULE)
+    find_package(RenderDoc MODULE)
+    find_package(SimpleIni MODULE)
+    find_package(stb MODULE)
+    find_package(VulkanMemoryAllocator CONFIG)
+    find_package(ZLIB 1.2 REQUIRED)
+    find_package(zstd 1.5 REQUIRED)
+else()
+    include(CMakeModules/CPM.cmake)
+
+    message(STATUS "Downloading and extracting boost library sources. This will take some time...")
+    CPMAddPackage(
+        NAME boost
+        URL "https://github.com/boostorg/boost/releases/download/boost-1.88.0/boost-1.88.0-cmake.7z"
+        VERSION 1.88.0
+    )
+    CPMAddPackage("gh:lsalzman/enet@1.3.18")
+    CPMAddPackage("gh:fmtlib/fmt#11.1.4")
+    CPMAddPackage(
+        NAME lz4
+        GIT_REPOSITORY https://github.com/lz4/lz4.git
+        VERSION 1.10.0
+        DOWNLOAD_ONLY YES
+    )
+    add_subdirectory(${lz4_SOURCE_DIR}/build/cmake lz4)
+    CPMAddPackage("gh:nlohmann/json@3.8.0")
+    CPMAddPackage("gh:xiph/opus@1.3.1")
+    CPMAddPackage("gh:brofield/simpleini@4.22")
+    CPMAddPackage("gh:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator@3.2.1")
+    CPMAddPackage("gh:madler/zlib@1.2.13")
+    CPMAddPackage(
+        NAME zstd
+        GIT_REPOSITORY https://github.com/facebook/zstd.git
+        VERSION 1.5.7
+        DOWNLOAD_ONLY YES
+    )
+    add_subdirectory(${zstd_SOURCE_DIR}/build/cmake zstd)
+    CPMAddPackage("gh:KhronosGroup/SPIRV-Headers#vulkan-sdk-1.3.280.0")
+
+    # Set up required aliases
+    add_library(enet::enet ALIAS enet)
+    add_library(Opus::opus ALIAS opus)
+    add_library(lz4::lz4 ALIAS lz4)
+    add_library(zstd::zstd ALIAS libzstd)
 endif()
-find_package(lz4 REQUIRED)
-find_package(nlohmann_json 3.8 REQUIRED)
-find_package(Opus 1.3 MODULE)
-find_package(RenderDoc MODULE)
-find_package(SimpleIni MODULE)
-find_package(stb MODULE)
-find_package(VulkanMemoryAllocator CONFIG)
-find_package(ZLIB 1.2 REQUIRED)
-find_package(zstd 1.5 REQUIRED)
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_HEADERS)
-    find_package(VulkanHeaders 1.3.274 REQUIRED)
+    if (NOT YUZU_USE_CPM)
+        find_package(VulkanHeaders 1.3.274 REQUIRED)
+    else()
+        CPMAddPackage("gh:KhronosGroup/Vulkan-Headers@1.3.274")
+    endif()
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_UTILITY_LIBRARIES)
-    find_package(VulkanUtilityLibraries REQUIRED)
+    if (NOT YUZU_USE_CPM)
+        find_package(VulkanUtilityLibraries REQUIRED)
+    else()
+        CPMAddPackage("gh:KhronosGroup/Vulkan-Utility-Libraries#fce11d52fee0344bb10a098b0a398dff42cb5d51")
+    endif()
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_SPIRV_TOOLS)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SPIRV-Tools REQUIRED SPIRV-Tools)
+    if (NOT YUZU_USE_CPM)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(SPIRV-Tools REQUIRED SPIRV-Tools)
+    else()
+        CPMAddPackage("gh:KhronosGroup/SPIRV-Tools#dd4b663e13c07fea4fbb3f70c1c91c86731099f7") # This is tag v2024.2, but some weird but is preventing us from using it here
+    endif()
 endif()
 
 if (ENABLE_LIBUSB)
@@ -698,7 +762,10 @@ function(create_target_directory_groups target_name)
 endfunction()
 
 # Prevent boost from linking against libs when building
-target_link_libraries(Boost::headers INTERFACE Boost::disable_autolinking)
+if (NOT TARGET Boost::headers)
+    target_link_libraries(Boost::headers INTERFACE Boost::disable_autolinking)
+endif()
+
 # Adjustments for MSVC + Ninja
 if (MSVC AND CMAKE_GENERATOR STREQUAL "Ninja")
     add_compile_options(

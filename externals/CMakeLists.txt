@@ -15,17 +15,21 @@ set(BUILD_SHARED_LIBS OFF)
 set_directory_properties(PROPERTIES EXCLUDE_FROM_ALL ON)
 
 # SPIRV Headers
-find_package(SPIRV-Headers)
 if (NOT TARGET SPIRV-Headers::SPIRV-Headers)
-    add_subdirectory(SPIRV-Headers)
+    find_package(SPIRV-Headers)
+    if (NOT TARGET SPIRV-Headers::SPIRV-Headers)
+        add_subdirectory(SPIRV-Headers)
+    endif()
 endif()
 
 # fmt (also used by Dynarmic, so needs to be added first)
-find_package(fmt)
 if (NOT TARGET fmt::fmt)
-    # fmtlib formatting library
-    set(FMT_INSTALL ON)
-    add_subdirectory(fmt)
+    find_package(fmt)
+    if (NOT TARGET fmt::fmt)
+        # fmtlib formatting library
+        set(FMT_INSTALL ON)
+        add_subdirectory(fmt)
+    endif()
 endif()
 
 # Xbyak (also used by Dynarmic, so needs to be added first)
@@ -197,8 +201,10 @@ if (NOT TARGET LLVM::Demangle)
     add_library(LLVM::Demangle ALIAS demangle)
 endif()
 
-add_library(stb stb/stb_dxt.cpp)
-target_include_directories(stb PUBLIC ./stb)
+if (NOT TARGET stb)
+    add_library(stb stb/stb_dxt.cpp)
+    target_include_directories(stb PUBLIC ./stb)
+endif()
 
 if (NOT TARGET stb::headers)
     add_library(stb::headers ALIAS stb)
