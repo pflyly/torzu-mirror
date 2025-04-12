@@ -99,7 +99,7 @@ add_library(video_core STATIC
     invalidation_accumulator.h
     memory_manager.cpp
     memory_manager.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     present.h
     pte_kind.h
     query_cache/bank_base.h
@@ -372,10 +372,6 @@ if (ARCHITECTURE_x86_64)
         macro/macro_jit_x64.h
     )
     target_link_libraries(video_core PUBLIC xbyak::xbyak)
-
-    if (NOT MSVC)
-        target_compile_options(video_core PRIVATE -msse4.1)
-    endif()
 endif()
 
 if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
@@ -383,7 +379,7 @@ if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(video_core PRIVATE precompiled_headers.h)
+    target_precompile_headers(video_core PRIVATE precompiled_headers.hpp)
 endif()
 
 if (YUZU_ENABLE_LTO)

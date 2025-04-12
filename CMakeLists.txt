@@ -85,9 +85,77 @@ option(YUZU_ENABLE_PORTABLE "Allow yuzu to enable portable mode if a user folder
 
 option(YUZU_USE_LLVM_DEMANGLE "Use LLVM Demangle" ON)
 
+option(YUZU_NO_PRECOMPILED_HEADERS "Do not precompile headers" OFF)
+
 CMAKE_DEPENDENT_OPTION(YUZU_USE_FASTER_LD "Check if a faster linker is available" ON "NOT WIN32" OFF)
 
 CMAKE_DEPENDENT_OPTION(USE_SYSTEM_MOLTENVK "Use the system MoltenVK lib (instead of the bundled one)" OFF "APPLE" OFF)
+
+if (YUZU_NO_PRECOMPILED_HEADERS)
+    function (target_precompile_headers)
+        # Do nothing instead
+    endfunction()
+endif()
+
+# Detect current compilation architecture and create standard definitions
+# =======================================================================
+
+include(CheckSymbolExists)
+function(detect_architecture symbol arch)
+    if (NOT DEFINED ARCHITECTURE)
+        set(CMAKE_REQUIRED_QUIET 1)
+        check_symbol_exists("${symbol}" "" ARCHITECTURE_${arch})
+        unset(CMAKE_REQUIRED_QUIET)
+
+        # The output variable needs to be unique across invocations otherwise
+        # CMake's crazy scope rules will keep it defined
+        if (ARCHITECTURE_${arch})
+            set(ARCHITECTURE "${arch}" PARENT_SCOPE)
+            set(ARCHITECTURE_${arch} 1 PARENT_SCOPE)
+            add_definitions(-DARCHITECTURE_${arch}=1)
+        endif()
+    endif()
+endfunction()
+
+if (NOT ENABLE_GENERIC)
+    if (MSVC)
+        detect_architecture("_M_AMD64" x86_64)
+        detect_architecture("_M_IX86" x86)
+        detect_architecture("_M_ARM" arm)
+        detect_architecture("_M_ARM64" arm64)
+    else()
+        detect_architecture("__x86_64__" x86_64)
+        detect_architecture("__i386__" x86)
+        detect_architecture("__arm__" arm)
+        detect_architecture("__aarch64__" arm64)
+    endif()
+endif()
+
+if (NOT DEFINED ARCHITECTURE)
+    set(ARCHITECTURE "GENERIC")
+    set(ARCHITECTURE_GENERIC 1)
+    add_definitions(-DARCHITECTURE_GENERIC=1)
+endif()
+message(STATUS "Target architecture: ${ARCHITECTURE} (${YUZU_MARCH})")
+
+if (MSVC AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(YUZU_MARCH "SSE4.2" CACHE STRING "Compile for specified x86 arch (AVX, AVX2, etc.)")
+    add_compile_options(/arch:${YUZU_MARCH})
+else()
+    if (ARCHITECTURE STREQUAL "x86_64")
+        set(YUZU_MARCH "x86-64-v2" CACHE STRING "Compile for specified x86 microarchitecture level (x86-64-v3, native, etc.)")
+        add_compile_options(-march=${YUZU_MARCH})
+    elseif (ARCHITECTURE STREQUAL "arm64")
+        set(YUZU_MARCH "armv8-a" CACHE STRING "Compile for specified ARM architecture (armv8.1-a, native, etc.)")
+        add_compile_options(-march=${YUZU_MARCH})
+    else()
+        message(WARNING "Architecture ${ARCHITECTURE} unknown, EXPECT THINGS TO GO WRONG.")
+    endif()
+endif()
+
+if (MSVC)
+    add_definitions(-DWIN32)
+endif()
 
 set(DEFAULT_ENABLE_OPENSSL ON)
 if (ANDROID OR WIN32 OR APPLE)
@@ -244,46 +312,6 @@ if (NOT EXISTS ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.
     file(WRITE ${PROJECT_BINARY_DIR}/dist/compatibility_list/compatibility_list.json "")
 endif()
 
-# Detect current compilation architecture and create standard definitions
-# =======================================================================
-
-include(CheckSymbolExists)
-function(detect_architecture symbol arch)
-    if (NOT DEFINED ARCHITECTURE)
-        set(CMAKE_REQUIRED_QUIET 1)
-        check_symbol_exists("${symbol}" "" ARCHITECTURE_${arch})
-        unset(CMAKE_REQUIRED_QUIET)
-
-        # The output variable needs to be unique across invocations otherwise
-        # CMake's crazy scope rules will keep it defined
-        if (ARCHITECTURE_${arch})
-            set(ARCHITECTURE "${arch}" PARENT_SCOPE)
-            set(ARCHITECTURE_${arch} 1 PARENT_SCOPE)
-            add_definitions(-DARCHITECTURE_${arch}=1)
-        endif()
-    endif()
-endfunction()
-
-if (NOT ENABLE_GENERIC)
-    if (MSVC)
-        detect_architecture("_M_AMD64" x86_64)
-        detect_architecture("_M_IX86" x86)
-        detect_architecture("_M_ARM" arm)
-        detect_architecture("_M_ARM64" arm64)
-    else()
-        detect_architecture("__x86_64__" x86_64)
-        detect_architecture("__i386__" x86)
-        detect_architecture("__arm__" arm)
-        detect_architecture("__aarch64__" arm64)
-    endif()
-endif()
-
-if (NOT DEFINED ARCHITECTURE)
-    set(ARCHITECTURE "GENERIC")
-    set(ARCHITECTURE_GENERIC 1)
-    add_definitions(-DARCHITECTURE_GENERIC=1)
-endif()
-message(STATUS "Target architecture: ${ARCHITECTURE}")
 
 if (UNIX)
     add_definitions(-DYUZU_UNIX=1)
@@ -317,7 +345,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # Enforce the search mode of non-required packages for better and shorter failure messages
 if (NOT YUZU_USE_CPM)
-    find_package(Boost 1.79.0 REQUIRED context)
+    find_package(Boost 1.86.0 REQUIRED context)
     find_package(enet 1.3 MODULE)
     find_package(fmt REQUIRED)
     if (YUZU_USE_LLVM_DEMANGLE)
@@ -335,10 +363,20 @@ if (NOT YUZU_USE_CPM)
 else()
     include(CMakeModules/CPM.cmake)
 
+    # Disable tests in all externals supporting the standard option name
+    set(BUILD_TESTING OFF)
+
+    # Build only static externals
+    set(BUILD_SHARED_LIBS OFF)
+
+    # Do not attempt to use Brotli in httplib since we're not downloading it
+    set(HTTPLIB_USE_BROTLI_IF_AVAILABLE OFF)
+
     message(STATUS "Downloading and extracting boost library sources. This will take some time...")
     CPMAddPackage(
         NAME boost
         URL "https://github.com/boostorg/boost/releases/download/boost-1.88.0/boost-1.88.0-cmake.7z"
+        PATCHES boost-1.88.0-fix.patch
         VERSION 1.88.0
     )
     CPMAddPackage("gh:lsalzman/enet@1.3.18")
@@ -363,12 +401,20 @@ else()
     )
     add_subdirectory(${zstd_SOURCE_DIR}/build/cmake zstd)
     CPMAddPackage("gh:KhronosGroup/SPIRV-Headers#vulkan-sdk-1.3.280.0")
+    CPMAddPackage("gh:yhirose/cpp-httplib@0.20.0")
 
     # Set up required aliases
-    add_library(enet::enet ALIAS enet)
     add_library(Opus::opus ALIAS opus)
     add_library(lz4::lz4 ALIAS lz4)
     add_library(zstd::zstd ALIAS libzstd)
+    add_library(zstd::libzstd ALIAS libzstd)
+    add_library(nlohmann::json ALIAS nlohmann_json)
+
+    # Enet specific setup to add missing include dir
+    add_library(enet_fixed INTERFACE)
+    target_link_libraries(enet_fixed INTERFACE enet)
+    target_include_directories(enet_fixed INTERFACE ${enet_SOURCE_DIR}/include)
+    add_library(enet::enet ALIAS enet_fixed)
 endif()
 
 if (NOT YUZU_USE_EXTERNAL_VULKAN_HEADERS)
@@ -422,7 +468,6 @@ endif()
 
 if (ENABLE_WEB_SERVICE)
     find_package(cpp-jwt 1.4 CONFIG)
-    find_package(httplib 0.12 MODULE COMPONENTS OpenSSL)
 endif()
 
 if (YUZU_TESTS)
@@ -596,6 +641,10 @@ if(ENABLE_QT)
 
             if (DEFINED QT_BUILD)
                 download_bundled_external("qt/" ${QT_BUILD} QT_PREFIX)
+                execute_process(COMMAND chmod +x ${QT_PREFIX}/bin/moc.exe ERROR_QUIET)
+                execute_process(COMMAND chmod +x ${QT_PREFIX}/bin/uic.exe ERROR_QUIET)
+                execute_process(COMMAND chmod +x ${QT_PREFIX}/bin/rcc.exe ERROR_QUIET)
+                execute_process(COMMAND chmod +x ${QT_PREFIX}/bin/lrelease.exe ERROR_QUIET)
             endif()
 
             set(QT_PREFIX_HINT HINTS "${QT_PREFIX}")
@@ -773,6 +822,59 @@ if (MSVC AND CMAKE_GENERATOR STREQUAL "Ninja")
         /wd4711 # function 'function' selected for automatic inline expansion
         /wd4820 # 'bytes' bytes padding added after construct 'member_name'
     )
+endif()
+
+# Adjustments for Clang-cl
+if (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND ARCHITECTURE STREQUAL "x86_64")
+    set(LLVM_MINGW_VERSION 20250402)
+
+    # Set download URL and library path within the ZIP
+    set(ZIP_URL "https://github.com/mstorsjo/llvm-mingw/releases/download/${LLVM_MINGW_VERSION}/llvm-mingw-${LLVM_MINGW_VERSION}-ucrt-x86_64.zip")
+    set(LIB_PATH "llvm-mingw-${LLVM_MINGW_VERSION}-ucrt-x86_64/lib/clang/20/lib/windows/libclang_rt.builtins-x86_64.a")
+
+    # Set paths for download and extraction
+    set(DOWNLOAD_DIR "${CMAKE_BINARY_DIR}/llvm-mingw-download")
+    set(ZIP_FILE "${DOWNLOAD_DIR}/llvm-mingw.zip")
+    set(EXTRACTED_LIB "${DOWNLOAD_DIR}/${LIB_PATH}")
+
+    # Create download directory if it doesn't exist
+    file(MAKE_DIRECTORY "${DOWNLOAD_DIR}")
+
+    # Download and extract if the library doesn't exist
+    if(NOT EXISTS "${EXTRACTED_LIB}")
+        message(STATUS "Downloading llvm-mingw runtime libraries...")
+
+        # Download the ZIP file
+        file(DOWNLOAD
+            ${ZIP_URL}
+            ${ZIP_FILE}
+            SHOW_PROGRESS
+            # Uncomment and add EXPECTED_HASH if you know the SHA256 checksum
+            EXPECTED_HASH SHA256=4edc13d878b4ec49c2f1a6e9161abb093bbaefc8b7d129f3b3f57a22a4a41d38
+        )
+
+        message(STATUS "Extracting compiler-rt builtins library...")
+
+        # Extract the specific file from the ZIP
+        execute_process(
+            COMMAND ${CMAKE_COMMAND} -E tar xvf "${ZIP_FILE}" "${LIB_PATH}"
+            WORKING_DIRECTORY "${DOWNLOAD_DIR}"
+            RESULT_VARIABLE extraction_result
+        )
+
+        if(NOT extraction_result EQUAL 0)
+            message(FATAL_ERROR "Failed to extract library: ${extraction_result}")
+        endif()
+    endif()
+
+    # Create imported target for the library
+    add_library(llvm-mingw-runtime STATIC IMPORTED)
+    set_target_properties(llvm-mingw-runtime PROPERTIES
+        IMPORTED_LOCATION "${EXTRACTED_LIB}"
+    )
+
+    # Link the library to all executables in the project
+    link_libraries(llvm-mingw-runtime)
 endif()
 
 if (YUZU_USE_FASTER_LD AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

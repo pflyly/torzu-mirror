@@ -10,13 +10,14 @@ apt -y install libfmt-dev libenet-dev liblz4-dev nlohmann-json3-dev zlib1g-dev l
 
 # Install correct version of boost
 cd /tmp
-wget https://web.archive.org/web/20241120101759id_/https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2
-tar xf boost_1_84_0.tar.bz2
-cd boost_1_84_0
+wget https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.bz2
+echo "Extracting Boost sources..."
+tar xf boost_1_88_0.tar.bz2
+cd boost_1_88_0
 ./bootstrap.sh
 ./b2 install --with-{headers,context} link=static
 cd ..
-rm -rf boost_1_84_0
+rm -rf boost_1_88_0
 
 # Build Torzu
 cd /tmp

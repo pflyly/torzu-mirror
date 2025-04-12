@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 add_executable(yuzu-room
-    precompiled_headers.h
+    precompiled_headers.hpp
     yuzu_room.cpp
     yuzu_room.rc
 )
@@ -24,7 +24,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(yuzu-room PRIVATE precompiled_headers.h)
+    target_precompile_headers(yuzu-room PRIVATE precompiled_headers.hpp)
 endif()
 
 create_target_directory_groups(yuzu-room)

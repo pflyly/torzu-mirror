@@ -3,4 +3,5 @@
 
 #pragma once
 
-#include "common/common_precompiled_headers.h"
+#include "common/common_precompiled_headers.hpp"
+#include "frontend/maxwell/translate/impl/impl.h"

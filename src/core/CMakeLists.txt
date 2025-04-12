@@ -1133,7 +1133,7 @@ add_library(core STATIC
     memory/dmnt_cheat_vm.h
     perf_stats.cpp
     perf_stats.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     reporter.cpp
     reporter.h
     tools/freezer.cpp
@@ -1150,7 +1150,9 @@ if (MSVC)
     )
 else()
     target_compile_options(core PRIVATE
-        -Werror=conversion
+        # Currently causes issues with Boost, degrading it to just a warning for now...
+        #-Werror=conversion
+        -Wconversion
 
         -Wno-sign-conversion
         -Wno-cast-function-type
@@ -1161,6 +1163,9 @@ endif()
 
 target_link_libraries(core PUBLIC common PRIVATE audio_core hid_core network video_core nx_tzdb tz)
 target_link_libraries(core PUBLIC Boost::headers PRIVATE fmt::fmt nlohmann_json::nlohmann_json mbedtls RenderDoc::API)
+if (YUZU_USE_CPM)
+    target_link_libraries(core PUBLIC Boost::heap Boost::asio Boost::process Boost::crc)
+endif()
 if (MINGW)
     target_link_libraries(core PRIVATE ${MSWSOCK_LIBRARY})
 endif()
@@ -1230,7 +1235,7 @@ else()
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(core PRIVATE precompiled_headers.h)
+    target_precompile_headers(core PRIVATE precompiled_headers.hpp)
 endif()
 
 if (YUZU_ENABLE_LTO)

@@ -5,7 +5,11 @@
 
 #include <utility>
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
+#define MSV_BUT_NOT_CLANG
+#endif
+
+#ifdef MSV_BUT_NOT_CLANG
 #include <intrin.h>
 #pragma intrinsic(__umulh)
 #pragma intrinsic(_umul128)
@@ -20,7 +24,7 @@ namespace Common {
 
 // This function multiplies 2 u64 values and divides it by a u64 value.
 [[nodiscard]] static inline u64 MultiplyAndDivide64(u64 a, u64 b, u64 d) {
-#ifdef _MSC_VER
+#ifdef MSV_BUT_NOT_CLANG
     u128 r{};
     r[0] = _umul128(a, b, &r[1]);
     u64 remainder;
@@ -41,7 +45,7 @@ namespace Common {
 // This function multiplies 2 u64 values and produces a u128 value;
 [[nodiscard]] static inline u128 Multiply64Into128(u64 a, u64 b) {
     u128 result;
-#ifdef _MSC_VER
+#ifdef MSV_BUT_NOT_CLANG
     result[0] = _umul128(a, b, &result[1]);
 #else
     unsigned __int128 tmp = a;

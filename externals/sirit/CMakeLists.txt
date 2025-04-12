@@ -57,8 +57,7 @@ if (MSVC)
         /EHsc
         /Zc:throwingNew # Assumes new never returns null
         /Zc:inline # Omits inline functions from object-file output
-        /DNOMINMAX
-        /WX)
+        /DNOMINMAX)
 
     if (CMAKE_VS_PLATFORM_TOOLSET MATCHES "LLVM-vs[0-9]+")
         list(APPEND SIRIT_CXX_FLAGS
@@ -76,8 +75,7 @@ else()
         -Wno-missing-braces
         -Wconversion
         -Wsign-conversion
-        -Wshadow
-        -Werror)
+        -Wshadow)
 endif()
 
 # Enable unit-testing.

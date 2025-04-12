@@ -203,7 +203,7 @@ add_executable(yuzu
     multiplayer/validation.h
     play_time_manager.cpp
     play_time_manager.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     qt_common.cpp
     qt_common.h
     startup_checks.cpp
@@ -382,8 +382,11 @@ elseif(WIN32)
 endif()
 
 target_link_libraries(yuzu PRIVATE common core input_common frontend_common network video_core)
-target_link_libraries(yuzu PRIVATE Boost::headers glad Qt${QT_MAJOR_VERSION}::Widgets)
+target_link_libraries(yuzu PRIVATE Boost::headers httplib::httplib glad Qt${QT_MAJOR_VERSION}::Widgets)
 target_link_libraries(yuzu PRIVATE ${PLATFORM_LIBRARIES} Threads::Threads)
+if (TARGET nlohmann::json)
+    target_link_libraries(yuzu PRIVATE nlohmann::json)
+endif()
 if (ENABLE_WEB_SERVICE)
     target_link_libraries(yuzu PRIVATE httplib::httplib)
 endif()
@@ -477,7 +480,7 @@ if (ARCHITECTURE_x86_64 OR ARCHITECTURE_arm64)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(yuzu PRIVATE precompiled_headers.h)
+    target_precompile_headers(yuzu PRIVATE precompiled_headers.hpp)
 endif()
 
 create_target_directory_groups(yuzu)

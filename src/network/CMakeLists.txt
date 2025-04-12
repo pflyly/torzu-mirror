@@ -8,7 +8,7 @@ add_library(network STATIC
     network.h
     packet.cpp
     packet.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     room.cpp
     room.h
     room_member.cpp
@@ -26,5 +26,5 @@ if (ENABLE_WEB_SERVICE)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(network PRIVATE precompiled_headers.h)
+    target_precompile_headers(network PRIVATE precompiled_headers.hpp)
 endif()

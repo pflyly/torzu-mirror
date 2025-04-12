@@ -22,7 +22,7 @@ if (YUZU_CMD)
         emu_window/emu_window_sdl2_null.h
         emu_window/emu_window_sdl2_vk.cpp
         emu_window/emu_window_sdl2_vk.h
-        precompiled_headers.h
+        precompiled_headers.hpp
         sdl_config.cpp
         sdl_config.h
         yuzu.cpp
@@ -60,7 +60,7 @@ if (YUZU_CMD)
     endif()
 
     if (YUZU_USE_PRECOMPILED_HEADERS)
-        target_precompile_headers(yuzu-cmd PRIVATE precompiled_headers.h)
+        target_precompile_headers(yuzu-cmd PRIVATE precompiled_headers.hpp)
     endif()
 
     create_target_directory_groups(yuzu-cmd)

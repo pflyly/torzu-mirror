@@ -32,7 +32,7 @@ add_library(input_common STATIC
     input_poller.h
     main.cpp
     main.h
-    precompiled_headers.h
+    precompiled_headers.hpp
 )
 
 if (MSVC)
@@ -42,7 +42,9 @@ if (MSVC)
     )
 else()
     target_compile_options(input_common PRIVATE
-        -Werror=conversion
+        # Causes Boost to fail to compile, let's just let it be a warning for now.
+        #-Werror=conversion
+        -Wconversion
     )
 endif()
 
@@ -89,7 +91,7 @@ create_target_directory_groups(input_common)
 target_link_libraries(input_common PUBLIC hid_core PRIVATE common Boost::headers)
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(input_common PRIVATE precompiled_headers.h)
+    target_precompile_headers(input_common PRIVATE precompiled_headers.hpp)
 endif()
 
 if (ANDROID)

@@ -1,0 +1,24 @@
+diff -ruN boost-src/libs/cobalt/include/boost/cobalt/concepts.hpp boost-src-patched/libs/cobalt/include/boost/cobalt/concepts.hpp
+--- boost-src/libs/cobalt/include/boost/cobalt/concepts.hpp	2025-04-12 18:25:53.791233755 +0200
++++ boost-src-patched/libs/cobalt/include/boost/cobalt/concepts.hpp	2025-04-12 18:29:50.304496166 +0200
+@@ -62,7 +62,7 @@
+ template <typename T>
+ concept with_get_executor = requires (T& t)
+ {
+-  {t.get_executor()} -> asio::execution::executor;
++  t.get_executor();
+ };
+ 
+ 
+diff -ruN boost-src/libs/context/CMakeLists.txt boost-src-patched/libs/context/CMakeLists.txt
+--- boost-src/libs/context/CMakeLists.txt	2025-04-12 18:25:53.847233801 +0200
++++ boost-src-patched/libs/context/CMakeLists.txt	2025-04-12 18:29:33.436479899 +0200
+@@ -189,7 +189,7 @@
+ 
+   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+     set_property(SOURCE ${ASM_SOURCES} APPEND PROPERTY COMPILE_OPTIONS "-x" "assembler-with-cpp")
+-  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
++  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT MSVC)
+     set_property(SOURCE ${ASM_SOURCES} APPEND PROPERTY COMPILE_OPTIONS "-Wno-unused-command-line-argument")
+   endif()
+ 

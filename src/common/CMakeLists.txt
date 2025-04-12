@@ -34,7 +34,7 @@ add_library(common STATIC
     cityhash.cpp
     cityhash.h
     common_funcs.h
-    common_precompiled_headers.h
+    common_precompiled_headers.hpp
     common_types.h
     concepts.h
     container_hash.h
@@ -103,7 +103,7 @@ add_library(common STATIC
     param_package.h
     parent_of_member.h
     point.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     quaternion.h
     range_map.h
     range_mutex.h
@@ -260,6 +260,9 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 target_link_libraries(common PUBLIC Boost::context Boost::headers fmt::fmt microprofile stb::headers Threads::Threads)
+if (YUZU_USE_CPM)
+    target_link_libraries(common PUBLIC Boost::icl)
+endif()
 target_link_libraries(common PRIVATE lz4::lz4 zstd::zstd LLVM::Demangle)
 
 if (ANDROID)
@@ -268,7 +271,7 @@ if (ANDROID)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(common PRIVATE precompiled_headers.h)
+    target_precompile_headers(common PRIVATE precompiled_headers.hpp)
 endif()
 
 create_target_directory_groups(common)

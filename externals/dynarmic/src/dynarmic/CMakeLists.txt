@@ -510,7 +510,7 @@ target_link_libraries(dynarmic
 if (TARGET boost_headers)
     target_link_libraries(dynarmic
         PRIVATE
-            boost_headers
+            boost_headers boost_variant boost_icl
     )
 else()
     target_link_libraries(dynarmic

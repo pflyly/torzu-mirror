@@ -53,7 +53,7 @@ add_library(audio_core STATIC
     out/audio_out.h
     out/audio_out_system.cpp
     out/audio_out_system.h
-    precompiled_headers.h
+    precompiled_headers.hpp
     renderer/audio_device.cpp
     renderer/audio_device.h
     renderer/audio_renderer.h
@@ -261,7 +261,7 @@ if (ANDROID)
 endif()
 
 if (YUZU_USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(audio_core PRIVATE precompiled_headers.h)
+    target_precompile_headers(audio_core PRIVATE precompiled_headers.hpp)
 endif()
 
 create_target_directory_groups(audio_core)

@@ -110,11 +110,17 @@ else()
     add_compile_options(
         -fwrapv
 
-        -Werror=all
-        -Werror=extra
-        -Werror=missing-declarations
-        -Werror=shadow
-        -Werror=unused
+        # These cause issues with Boost, let's just set them to regular warnings instead (for now)
+        #-Werror=all
+        #-Werror=extra
+        #-Werror=missing-declarations
+        #-Werror=shadow
+        #-Werror=unused
+        -Wall
+        -Wextra
+        -Wmissing-declarations
+        -Wshadow
+        -Wunused
 
         -Wno-attributes
         -Wno-invalid-offsetof

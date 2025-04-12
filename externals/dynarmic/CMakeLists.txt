@@ -182,32 +182,29 @@ endif()
 #
 # Install
 #
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+# Only try to install if boost wasn't included as submodule
+if (NOT TARGET boost_headers)
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
 
-# Hack to get CPM.cmake working with this (should be fine though)
-set(BOOST_TARGET )
-if (TARGET boost_headers)
-    set(BOOST_TARGET boost_headers)
+    install(TARGETS dynarmic EXPORT dynarmicTargets)
+    install(EXPORT dynarmicTargets
+        NAMESPACE dynarmic::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
+
+    configure_package_config_file(CMakeModules/dynarmicConfig.cmake.in
+        dynarmicConfig.cmake
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
+    write_basic_package_version_file(dynarmicConfigVersion.cmake
+        COMPATIBILITY SameMajorVersion
+    )
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfigVersion.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
+
+    install(DIRECTORY src/dynarmic TYPE INCLUDE FILES_MATCHING PATTERN "*.h")
 endif()
-
-install(TARGETS dynarmic ${BOOST_TARGET} EXPORT dynarmicTargets)
-install(EXPORT dynarmicTargets
-    NAMESPACE dynarmic::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
-
-configure_package_config_file(CMakeModules/dynarmicConfig.cmake.in
-    dynarmicConfig.cmake
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
-write_basic_package_version_file(dynarmicConfigVersion.cmake
-    COMPATIBILITY SameMajorVersion
-)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
-
-install(DIRECTORY src/dynarmic TYPE INCLUDE FILES_MATCHING PATTERN "*.h")
