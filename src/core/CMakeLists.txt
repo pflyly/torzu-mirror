@@ -1165,6 +1165,8 @@ target_link_libraries(core PUBLIC common PRIVATE audio_core hid_core network vid
 target_link_libraries(core PUBLIC Boost::headers PRIVATE fmt::fmt nlohmann_json::nlohmann_json mbedtls RenderDoc::API)
 if (YUZU_USE_CPM)
     target_link_libraries(core PUBLIC Boost::heap Boost::asio Boost::process Boost::crc)
+else()
+    target_link_libraries(core PUBLIC Boost::system Boost::fiber)
 endif()
 if (MINGW)
     target_link_libraries(core PRIVATE ${MSWSOCK_LIBRARY})

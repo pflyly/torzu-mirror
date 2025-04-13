@@ -259,7 +259,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   )
 endif()
 
-target_link_libraries(common PUBLIC Boost::context Boost::headers fmt::fmt microprofile stb::headers Threads::Threads)
+target_link_libraries(common PUBLIC Boost::headers Boost::context fmt::fmt microprofile stb::headers Threads::Threads)
 if (YUZU_USE_CPM)
     target_link_libraries(common PUBLIC Boost::icl)
 endif()

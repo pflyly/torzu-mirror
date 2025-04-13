@@ -345,7 +345,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # Enforce the search mode of non-required packages for better and shorter failure messages
 if (NOT YUZU_USE_CPM)
-    find_package(Boost 1.86.0 REQUIRED context)
+    find_package(Boost 1.86.0 REQUIRED headers context system fiber)
     find_package(enet 1.3 MODULE)
     find_package(fmt REQUIRED)
     if (YUZU_USE_LLVM_DEMANGLE)
