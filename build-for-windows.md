@@ -165,7 +165,28 @@ git submodule update --init --recursive
 ---
 ---
 
-# Method II: MinGW-w64 Build with MSYS2
+# Method II: Clang-CL on Linux
+
+Yet to be written. These loose snippets may help you:
+
+https://github.com/mstorsjo/msvc-wine
+
+https://apt.llvm.org
+
+```
+exec bwrap --bind / / --ro-bind '/opt/msvc/Windows Kits/10/Include/10.0.22621.0/ucrt' /usr/include --dev /dev /bin/bash
+```
+```
+CC=clang-cl-19 CXX=clang-cl-19 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS:STRING="--target=x86_64-windows-msvc /EHa -Wno-unused-command-line-argument -Wno-unknown-argument" -DCMAKE_C_FLAGS:STRING="--target=x86_64-windows-msvc -Wno-unused-command-line-argument  -Wno-unknown-argument" -DCMAKE_SYSTEM_NAME:STRING=Windows -DYUZU_USE_BUNDLED_VCPKG=OFF -DYUZU_USE_CPM=ON -DENABLE_OPENSSL=OFF -DENABLE_WEB_SERVICE=OFF -DENABLE_LIBUSB=OFF -DYUZU_TESTS=OFF -GNinja
+```
+
+---
+---
+---
+---
+---
+
+# Method III: MinGW-w64 Build with MSYS2
 
 ## Prerequisites to install
 
@@ -255,7 +276,7 @@ Doesn't require the rather large Qt dependency, but you will lack a GUI frontend
 ---
 ---
 
-# Method III: CLion Environment Setup
+# Method IV: CLion Environment Setup
 
 ## Minimal Dependencies
 
