@@ -89,7 +89,7 @@ If version 5.15.2 is not already installed, pre-compiled binaries for Qt 5.15.2 
 
 All other dependencies will be downloaded by [vcpkg](https://vcpkg.io/) if needed:
 
-  * [Boost](https://www.boost.org/users/download/) 1.79.0+
+  * [Boost](https://www.boost.org/users/download/) 1.86.0+
   * [Catch2](https://github.com/catchorg/Catch2) 2.13.7 - 2.13.9
   * [fmt](https://fmt.dev/) 8.0.1+
   * [lz4](http://www.lz4.org) 1.8+
