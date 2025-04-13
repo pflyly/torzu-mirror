@@ -25,7 +25,7 @@ if [ ! "$BUILD_USE_CPM" = 1 ]; then
         tar xf boost_1_88_0.tar.bz2
         cd boost_1_88_0
         ./bootstrap.sh
-        ./b2 install --with-{headers,context} link=static
+        ./b2 install --with-{headers,context,system,fiber,atomic,filesystem} link=static
         cd ..
         rm -rf boost_1_88_0 boost_1_88_0.tar.bz2
     fi
