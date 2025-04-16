@@ -87,17 +87,9 @@ option(YUZU_ENABLE_PORTABLE "Allow yuzu to enable portable mode if a user folder
 
 option(YUZU_USE_LLVM_DEMANGLE "Use LLVM Demangle" ON)
 
-option(YUZU_NO_PRECOMPILED_HEADERS "Do not precompile headers" OFF)
-
 CMAKE_DEPENDENT_OPTION(YUZU_USE_FASTER_LD "Check if a faster linker is available" ON "NOT WIN32" OFF)
 
 CMAKE_DEPENDENT_OPTION(USE_SYSTEM_MOLTENVK "Use the system MoltenVK lib (instead of the bundled one)" OFF "APPLE" OFF)
-
-if (YUZU_NO_PRECOMPILED_HEADERS)
-    function (target_precompile_headers)
-        # Do nothing instead
-    endfunction()
-endif()
 
 # Detect current compilation architecture and create standard definitions
 # =======================================================================
