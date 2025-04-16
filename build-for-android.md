@@ -44,9 +44,9 @@ https://developer.android.com/studio/intro
 ### Dependencies
 ```
 sudo apt-get update
-sudo apt-get install -y sdkmanager openjdk-17-jdk build-essential curl git pkg-config glslang-tools zip
-sudo sdkmanager "ndk;26.3.11579264" "platforms;android-34" "build-tools;34.0.0" "cmake;3.22.1" "platform-tools;34.0.5"
-sudo update-alternatives --config java # Select Java 17 here if possible
+sudo apt-get install -y sdkmanager openjdk-21-jdk build-essential curl git pkg-config glslang-tools zip
+sudo sdkmanager "ndk;26.3.11579264" "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "platform-tools;35.0.5"
+sudo update-alternatives --config java # Select Java 21 here if possible
 ```
 
 ### Cloning Yuzu with Git

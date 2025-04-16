@@ -100,9 +100,11 @@ void EmuThread::run() {
 
     m_system.GetCpuManager().OnGpuReady();
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     if (m_system.DebuggerEnabled()) {
         m_system.InitializeDebugger();
     }
+#endif
 
     while (!stop_token.stop_requested()) {
         std::unique_lock lk{m_should_run_mutex};
@@ -122,7 +124,9 @@ void EmuThread::run() {
     }
 
     // Shutdown the main emulated process
+#ifndef YUZU_NO_CPU_DEBUGGER
     m_system.DetachDebugger();
+#endif
     m_system.ShutdownMainProcess();
 
 #if MICROPROFILE_ENABLED

@@ -30,13 +30,6 @@ add_library(core STATIC
     crypto/partition_data_manager.h
     crypto/xts_encryption_layer.cpp
     crypto/xts_encryption_layer.h
-    debugger/debugger.cpp
-    debugger/debugger.h
-    debugger/debugger_interface.h
-    debugger/gdbstub.cpp
-    debugger/gdbstub.h
-    debugger/gdbstub_arch.cpp
-    debugger/gdbstub_arch.h
     device_memory.cpp
     device_memory.h
     device_memory_manager.h
@@ -1141,6 +1134,20 @@ add_library(core STATIC
     tools/renderdoc.cpp
     tools/renderdoc.h
 )
+
+if (YUZU_NO_CPU_DEBUGGER)
+    target_compile_definitions(core PUBLIC YUZU_NO_CPU_DEBUGGER)
+else()
+    target_sources(core PRIVATE
+      debugger/debugger.cpp
+      debugger/debugger.h
+      debugger/debugger_interface.h
+      debugger/gdbstub.cpp
+      debugger/gdbstub.h
+      debugger/gdbstub_arch.cpp
+      debugger/gdbstub_arch.h
+    )
+endif()
 
 if (MSVC)
     target_compile_options(core PRIVATE

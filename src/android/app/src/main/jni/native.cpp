@@ -297,7 +297,9 @@ void EmulationSession::ShutdownEmulation() {
 
     // Shutdown the main emulated process
     if (m_load_result == Core::SystemResultStatus::Success) {
+#ifndef YUZU_NO_CPU_DEBUGGER
         m_system.DetachDebugger();
+#endif
         m_system.ShutdownMainProcess();
         m_detached_tasks.WaitForAllTasks();
         m_load_result = Core::SystemResultStatus::ErrorNotInitialized;
@@ -344,9 +346,11 @@ void EmulationSession::RunEmulation() {
 
     void(m_system.Run());
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     if (m_system.DebuggerEnabled()) {
         m_system.InitializeDebugger();
     }
+#endif
 
     while (true) {
         {

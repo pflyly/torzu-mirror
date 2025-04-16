@@ -436,13 +436,17 @@ int main(int argc, char** argv) {
 #endif
 
     void(system.Run());
+#ifndef YUZU_NO_CPU_DEBUGGER
     if (system.DebuggerEnabled()) {
         system.InitializeDebugger();
     }
+#endif
     while (emu_window->IsOpen()) {
         emu_window->WaitEvent();
     }
+#ifndef YUZU_NO_CPU_DEBUGGER
     system.DetachDebugger();
+#endif
     void(system.Pause());
     system.ShutdownMainProcess();
 

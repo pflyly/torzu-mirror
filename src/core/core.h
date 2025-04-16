@@ -184,8 +184,10 @@ public:
     /// Set the shutting down state.
     void SetShuttingDown(bool shutting_down);
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     /// Forcibly detach the debugger if it is running.
     void DetachDebugger();
+#endif
 
     std::unique_lock<std::mutex> StallApplication();
     void UnstallApplication();
@@ -193,10 +195,12 @@ public:
     void SetNVDECActive(bool is_nvdec_active);
     [[nodiscard]] bool GetNVDECActive();
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     /**
      * Initialize the debugger.
      */
     void InitializeDebugger();
+#endif
 
     /**
      * Load an executable application.
@@ -377,8 +381,10 @@ public:
     [[nodiscard]] Service::Account::ProfileManager& GetProfileManager();
     [[nodiscard]] const Service::Account::ProfileManager& GetProfileManager() const;
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     [[nodiscard]] Core::Debugger& GetDebugger();
     [[nodiscard]] const Core::Debugger& GetDebugger() const;
+#endif
 
     /// Gets a mutable reference to the Room Network.
     [[nodiscard]] Network::RoomNetwork& GetRoomNetwork();
@@ -412,8 +418,10 @@ public:
     /// Tells if system is running on multicore.
     [[nodiscard]] bool IsMulticore() const;
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     /// Tells if the system debugger is enabled.
     [[nodiscard]] bool DebuggerEnabled() const;
+#endif
 
     /// Runs a server instance until shutdown.
     void RunServer(std::unique_ptr<Service::ServerManager>&& server_manager);

@@ -992,10 +992,12 @@ Result KProcess::Run(s32 priority, size_t stack_size) {
         this->ChangeState(state);
     };
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     // Suspend for debug, if we should.
     if (m_kernel.System().DebuggerEnabled()) {
         main_thread->RequestSuspend(SuspendType::Debug);
     }
+#endif
 
     // Run our thread.
     R_TRY(main_thread->Run());

@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "core/core.h"
+#ifndef YUZU_NO_CPU_DEBUGGER
 #include "core/debugger/debugger.h"
+#endif
 #include "core/hle/kernel/k_process.h"
 #include "core/hle/kernel/k_thread.h"
 #include "core/hle/kernel/svc.h"
@@ -106,6 +108,7 @@ void Break(Core::System& system, BreakReason reason, u64 info1, u64 info2) {
         system.CurrentPhysicalCore().LogBacktrace();
     }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     const bool is_hbl = GetCurrentProcess(system.Kernel()).IsHbl();
     const bool should_break = is_hbl || !notification_only;
 
@@ -114,6 +117,7 @@ void Break(Core::System& system, BreakReason reason, u64 info1, u64 info2) {
         system.GetDebugger().NotifyThreadStopped(thread);
         thread->RequestSuspend(Kernel::SuspendType::Debug);
     }
+#endif
 }
 
 void ReturnFromException(Core::System& system, Result result) {

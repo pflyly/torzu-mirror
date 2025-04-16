@@ -2076,9 +2076,12 @@ bool GMainWindow::OnShutdownBegin() {
 
     int shutdown_time = 1000;
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     if (system->DebuggerEnabled()) {
         shutdown_time = 0;
-    } else if (system->GetExitLocked()) {
+    } else
+#endif
+    if (system->GetExitLocked()) {
         shutdown_time = 5000;
     }
 

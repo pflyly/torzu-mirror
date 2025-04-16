@@ -16,10 +16,18 @@ using namespace Common::Literals;
 class DynarmicCallbacks64 : public Dynarmic::A64::UserCallbacks {
 public:
     explicit DynarmicCallbacks64(ArmDynarmic64& parent, Kernel::KProcess* process)
-        : m_parent{parent}, m_memory(process->GetMemory()),
-          m_process(process), m_debugger_enabled{parent.m_system.DebuggerEnabled()},
-          m_check_memory_access{m_debugger_enabled ||
-                                !Settings::values.cpuopt_ignore_memory_aborts.GetValue()} {}
+        : m_parent{parent}
+        , m_memory(process->GetMemory())
+        , m_process(process)
+#ifndef YUZU_NO_CPU_DEBUGGER
+        , m_debugger_enabled{parent.m_system.DebuggerEnabled()}
+#endif
+        , m_check_memory_access{
+#ifndef YUZU_NO_CPU_DEBUGGER
+              m_debugger_enabled ||
+#endif
+              !Settings::values.cpuopt_ignore_memory_aborts.GetValue()}
+    {}
 
     u8 MemoryRead8(u64 vaddr) override {
         CheckMemoryAccess(vaddr, 1, Kernel::DebugWatchpointType::Read);
@@ -139,10 +147,12 @@ public:
             ReturnException(pc, PrefetchAbort);
             return;
         default:
+#ifndef YUZU_NO_CPU_DEBUGGER
             if (m_debugger_enabled) {
                 ReturnException(pc, InstructionBreakpoint);
                 return;
             }
+#endif
 
             m_parent.LogBacktrace(m_process);
             LOG_CRITICAL(Core_ARM, "ExceptionRaised(exception = {}, pc = {:08X}, code = {:08X})",
@@ -192,6 +202,7 @@ public:
             return false;
         }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
         if (!m_debugger_enabled) {
             return true;
         }
@@ -202,6 +213,7 @@ public:
             m_parent.m_jit->HaltExecution(DataAbort);
             return false;
         }
+#endif
 
         return true;
     }
@@ -217,7 +229,9 @@ public:
     u64 m_tpidrro_el0{};
     u64 m_tpidr_el0{};
     Kernel::KProcess* m_process{};
+#ifndef YUZU_NO_CPU_DEBUGGER
     const bool m_debugger_enabled{};
+#endif
     const bool m_check_memory_access{};
     static constexpr u64 MinimumRunCycles = 10000U;
 };
@@ -272,10 +286,12 @@ std::shared_ptr<Dynarmic::A64::Jit> ArmDynarmic64::MakeJit(Common::PageTable* pa
     config.code_cache_size = 512_MiB;
 #endif
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     // Allow memory fault handling to work
     if (m_system.DebuggerEnabled()) {
         config.check_halt_on_memory_access = true;
     }
+#endif
 
     // null_jit
     if (!page_table) {

@@ -63,6 +63,8 @@ option(ENABLE_CUBEB "Enables the cubeb audio backend" ON)
 
 option(USE_DISCORD_PRESENCE "Enables Discord Rich Presence" OFF)
 
+option(YUZU_NO_CPU_DEBUGGER "Do not build debugging code" OFF)
+
 option(YUZU_TESTS "Compile tests" "${BUILD_TESTING}")
 
 option(YUZU_USE_PRECOMPILED_HEADERS "Use precompiled headers" ON)
@@ -170,7 +172,7 @@ endif()
 option(ENABLE_OPENSSL "Enable OpenSSL backend for ISslConnection" ${DEFAULT_ENABLE_OPENSSL})
 
 if (ANDROID AND YUZU_DOWNLOAD_ANDROID_VVL)
-    set(vvl_version "sdk-1.3.261.1")
+    set(vvl_version "1.4.304.1")
     set(vvl_zip_file "${CMAKE_BINARY_DIR}/externals/vvl-android.zip")
 
     set(vvl_lib_path "${CMAKE_CURRENT_SOURCE_DIR}/src/android/app/src/main/jniLibs/arm64-v8a/")

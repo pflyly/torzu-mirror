@@ -71,7 +71,9 @@ void PhysicalCore::RunThread(Kernel::KThread* thread) {
         // Notify the debugger and go to sleep if a step was performed
         // and this thread has been scheduled again.
         if (thread->GetStepState() == StepState::StepPerformed) {
+#ifndef YUZU_NO_CPU_DEBUGGER
             system.GetDebugger().NotifyThreadStopped(thread);
+#endif
             thread->RequestSuspend(SuspendType::Debug);
             return;
         }
@@ -113,20 +115,23 @@ void PhysicalCore::RunThread(Kernel::KThread* thread) {
             if (breakpoint) {
                 interface->RewindBreakpointInstruction();
             }
+#ifndef YUZU_NO_CPU_DEBUGGER
             if (system.DebuggerEnabled()) {
                 system.GetDebugger().NotifyThreadStopped(thread);
-            } else {
+            } else
+#endif
                 interface->LogBacktrace(process);
-            }
             thread->RequestSuspend(SuspendType::Debug);
             return;
         }
 
         // Notify the debugger and go to sleep on data abort.
         if (data_abort) {
+#ifndef YUZU_NO_CPU_DEBUGGER
             if (system.DebuggerEnabled()) {
                 system.GetDebugger().NotifyThreadWatchpoint(thread, *interface->HaltedWatchpoint());
             }
+#endif
             thread->RequestSuspend(SuspendType::Debug);
             return;
         }

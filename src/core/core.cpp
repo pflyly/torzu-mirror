@@ -256,9 +256,11 @@ struct System::Impl {
         return nvdec_active;
     }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     void InitializeDebugger(System& system, u16 port) {
         debugger = std::make_unique<Debugger>(system, port);
     }
+#endif
 
     void InitializeKernel(System& system) {
         LOG_DEBUG(Core, "initialized OK");
@@ -421,7 +423,9 @@ struct System::Impl {
         host1x_core.reset();
         perf_stats.reset();
         cpu_manager.Shutdown();
+#ifndef YUZU_NO_CPU_DEBUGGER
         debugger.reset();
+#endif
         kernel.Shutdown();
         stop_event = {};
         Network::RestartSocketOperations();
@@ -516,8 +520,10 @@ struct System::Impl {
     /// Network instance
     Network::NetworkInstance network_instance;
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     /// Debugger
     std::unique_ptr<Core::Debugger> debugger;
+#endif
 
     SystemResultStatus status = SystemResultStatus::Success;
     std::string status_details = "";
@@ -582,11 +588,13 @@ void System::SetShuttingDown(bool shutting_down) {
     impl->SetShuttingDown(shutting_down);
 }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
 void System::DetachDebugger() {
     if (impl->debugger) {
         impl->debugger->NotifyShutdown();
     }
 }
+#endif
 
 std::unique_lock<std::mutex> System::StallApplication() {
     return impl->StallApplication();
@@ -604,9 +612,11 @@ bool System::GetNVDECActive() {
     return impl->GetNVDECActive();
 }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
 void System::InitializeDebugger() {
     impl->InitializeDebugger(*this, Settings::values.gdbstub_port.GetValue());
 }
+#endif
 
 SystemResultStatus System::Load(Frontend::EmuWindow& emu_window, const std::string& filepath,
                                 Service::AM::FrontendAppletParameters& params) {
@@ -927,6 +937,7 @@ bool System::IsMulticore() const {
     return impl->is_multicore;
 }
 
+#ifndef YUZU_NO_CPU_DEBUGGER
 bool System::DebuggerEnabled() const {
     return Settings::values.use_gdbstub.GetValue();
 }
@@ -938,6 +949,7 @@ Core::Debugger& System::GetDebugger() {
 const Core::Debugger& System::GetDebugger() const {
     return *impl->debugger;
 }
+#endif
 
 Network::RoomNetwork& System::GetRoomNetwork() {
     return impl->room_network;

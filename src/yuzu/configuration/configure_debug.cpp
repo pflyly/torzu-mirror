@@ -19,9 +19,14 @@ ConfigureDebug::ConfigureDebug(const Core::System& system_, QWidget* parent)
     ui->setupUi(this);
     SetConfiguration();
 
+#ifdef YUZU_NO_CPU_DEBUGGER
+    ui->cpu_debug_box->setEnabled(false);
+    ui->toggle_gdbstub->setCheckState(Qt::Unchecked);
+#endif
+
     connect(ui->open_log_button, &QPushButton::clicked, []() {
-        const auto path =
-            QString::fromStdString(Common::FS::GetYuzuPathString(Common::FS::YuzuPath::LogDir));
+        const auto path = QString::fromStdString(
+            Common::FS::GetYuzuPathString(Common::FS::YuzuPath::LogDir));
         QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     });
 

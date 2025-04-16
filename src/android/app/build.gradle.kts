@@ -27,7 +27,7 @@ val autoVersion = (((System.currentTimeMillis() / 1000) - 1451606400) / 10).toIn
 android {
     namespace = "org.yuzu.yuzu_emu"
 
-    compileSdkVersion = "android-34"
+    compileSdkVersion = "android-35"
     ndkVersion = "26.3.11579264"
 
     buildFeatures {
@@ -35,12 +35,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     packaging {
@@ -118,7 +118,6 @@ android {
             isDefault = true
             resValue("string", "app_name_suffixed", "yuzu Debug Release")
             signingConfig = signingConfigs.getByName("default")
-            isMinifyEnabled = true
             isDebuggable = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android.txt"),
@@ -165,9 +164,10 @@ android {
                     "-DENABLE_WEB_SERVICE=0", // Don't use telemetry
                     "-DBUNDLE_SPEEX=ON",
                     "-DANDROID_ARM_NEON=true", // cryptopp requires Neon to work
+                    "-DYUZU_NO_CPU_DEBUGGER=ON",
+                    "-DYUZU_ENABLE_LTO=ON",
                     "-DYUZU_USE_BUNDLED_VCPKG=ON",
                     "-DYUZU_USE_BUNDLED_FFMPEG=ON",
-                    "-DYUZU_ENABLE_LTO=ON",
                     "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
                 )
 

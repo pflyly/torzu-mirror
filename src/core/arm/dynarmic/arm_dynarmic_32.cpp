@@ -16,10 +16,15 @@ using namespace Common::Literals;
 class DynarmicCallbacks32 : public Dynarmic::A32::UserCallbacks {
 public:
     explicit DynarmicCallbacks32(ArmDynarmic32& parent, Kernel::KProcess* process)
-        : m_parent{parent}, m_memory(process->GetMemory()),
-          m_process(process), m_debugger_enabled{parent.m_system.DebuggerEnabled()},
-          m_check_memory_access{m_debugger_enabled ||
-                                !Settings::values.cpuopt_ignore_memory_aborts.GetValue()} {}
+        : m_parent{parent}
+        , m_memory(process->GetMemory())
+        , m_process(process)
+#ifndef YUZU_NO_CPU_DEBUGGER
+        , m_debugger_enabled{parent.m_system.DebuggerEnabled()}
+#endif
+        , m_check_memory_access{m_debugger_enabled
+                                || !Settings::values.cpuopt_ignore_memory_aborts.GetValue()}
+    {}
 
     u8 MemoryRead8(u32 vaddr) override {
         CheckMemoryAccess(vaddr, 1, Kernel::DebugWatchpointType::Read);
@@ -213,10 +218,12 @@ std::shared_ptr<Dynarmic::A32::Jit> ArmDynarmic32::MakeJit(Common::PageTable* pa
     config.code_cache_size = 512_MiB;
 #endif
 
+#ifndef YUZU_NO_CPU_DEBUGGER
     // Allow memory fault handling to work
     if (m_system.DebuggerEnabled()) {
         config.check_halt_on_memory_access = true;
     }
+#endif
 
     // null_jit
     if (!page_table) {
