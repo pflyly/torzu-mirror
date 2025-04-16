@@ -174,10 +174,11 @@ https://github.com/mstorsjo/msvc-wine
 https://apt.llvm.org
 
 ```
+# Probably not needed, use if include files can't be found
 exec bwrap --bind / / --ro-bind '/opt/msvc/Windows Kits/10/Include/10.0.22621.0/ucrt' /usr/include --dev /dev /bin/bash
 ```
 ```
-CC=clang-cl-19 CXX=clang-cl-19 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS:STRING="--target=x86_64-windows-msvc /EHa -Wno-unused-command-line-argument -Wno-unknown-argument" -DCMAKE_C_FLAGS:STRING="--target=x86_64-windows-msvc -Wno-unused-command-line-argument  -Wno-unknown-argument" -DCMAKE_SYSTEM_NAME:STRING=Windows -DYUZU_USE_BUNDLED_VCPKG=OFF -DYUZU_USE_CPM=ON -DENABLE_OPENSSL=OFF -DENABLE_WEB_SERVICE=OFF -DENABLE_LIBUSB=OFF -DYUZU_TESTS=OFF -GNinja
+CC=clang-cl-19 CXX=clang-cl-19 cmake /tmp/torzu -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_{C,CXX}_FLAGS:STRING="--target=x86_64-windows-msvc /EHa -Wno-unused-command-line-argument -Wno-unknown-argument -flto=full -fdata-sections -ffunction-sections" -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" -DCMAKE_SYSTEM_NAME:STRING=Windows -DYUZU_USE_BUNDLED_VCPKG=OFF -DYUZU_USE_CPM=ON -DENABLE_OPENSSL=OFF -DENABLE_WEB_SERVICE=OFF -DENABLE_LIBUSB=OFF -DYUZU_TESTS=OFF -GNinja
 ```
 
 ---
