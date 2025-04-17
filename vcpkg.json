@@ -25,6 +25,7 @@
         "boost-test",
         "boost-timer",
         "boost-variant",
+        "boost-fiber",
         "fmt",
         "lz4",
         "nlohmann-json",
@@ -50,10 +51,6 @@
             "dependencies": [
                 {
                     "name": "oboe",
-                    "platform": "android"
-                },
-                {
-                    "name": "boost-fiber",
                     "platform": "android"
                 }
             ]
