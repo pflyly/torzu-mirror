@@ -22,7 +22,11 @@ Then install flatpak dependencies from within flatpak:
 ```bash
 flatpak install org.kde.Sdk//5.15-23.08 io.qt.qtwebengine.BaseApp//5.15-23.08
 ```
-Clone the torzu-flatpak repo and dependencies **(note: this github repo is the correct one)**:
+Clone the torzu-flatpak repo and dependencies **(assuming tor is installed as a service and running)**:
+```bash
+git -c http.proxy=socks5h://127.0.0.1:9050 clone --depth 1 --recursive http://vub63vv26q6v27xzv2dtcd25xumubshogm67yrpaz2rculqxs7jlfqad.onion/torzu-emu/onion.torzu_emu.torzu torzuFlatpak
+```
+Alternatively, you can clone from the github repo:
 ```bash
 git clone --depth 1 --recursive https://github.com/litucks/onion.torzu_emu.torzu.git torzuFlatpak
 ```
@@ -150,7 +154,7 @@ All other dependencies will be downloaded by [vcpkg](https://vcpkg.io/) if neede
 
 ### Clone the source with Git
 
-**from Codeberg repo:**
+**from Notabug repo:**
 ```bash
 git clone --depth 1 https://notabug.org/litucks/torzu.git
 ```
